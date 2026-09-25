@@ -15,7 +15,7 @@ const PROTECTED_ROUTES = [
 // Routes only for unauthenticated users
 const AUTH_ONLY_ROUTES = ['/login', '/signup']
 
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
     request,
   })

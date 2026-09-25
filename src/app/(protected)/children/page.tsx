@@ -1,7 +1,8 @@
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { formatAge, calculateAgeMonths } from '@/lib/utils'
+import { calculateAgeMonths, formatAge } from '@/lib/utils'
+import ChildrenList from './ChildrenList'
 
 export const metadata: Metadata = {
   title: 'My Children',
@@ -9,9 +10,7 @@ export const metadata: Metadata = {
 
 export default async function ChildrenPage() {
   const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
+  const { data: { user } } = await supabase.auth.getUser()
 
   const { data: children } = await supabase
     .from('children')
@@ -22,9 +21,7 @@ export default async function ChildrenPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-display font-black text-stone-900">
-          My Children
-        </h1>
+        <h1 className="text-3xl font-display font-black text-stone-900">My Children</h1>
         <Link
           href="/children/new"
           className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-5 py-2.5 rounded-full transition-all shadow-sm hover:shadow-md text-sm"
@@ -34,57 +31,13 @@ export default async function ChildrenPage() {
       </div>
 
       {children && children.length > 0 ? (
-        <div className="space-y-3">
-          {children.map((child) => {
-            const ageMonths = calculateAgeMonths(child.date_of_birth)
-            const ageDisplay = formatAge(ageMonths)
-            return (
-              <div
-                key={child.id}
-                className="bg-white rounded-3xl p-5 shadow-sm border border-stone-100 flex items-center justify-between"
-              >
-                <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-amber-100 rounded-2xl flex items-center justify-center text-xl font-display font-black text-amber-600">
-                    {child.name[0].toUpperCase()}
-                  </div>
-                  <div>
-                    <p className="font-display font-bold text-stone-900">
-                      {child.name}
-                    </p>
-                    <p className="text-stone-500 text-sm">{ageDisplay}</p>
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  <Link
-                    href={`/children/${child.id}`}
-                    className="text-amber-600 hover:text-amber-700 font-semibold text-sm px-4 py-2 rounded-full hover:bg-amber-50 transition-colors"
-                  >
-                    View
-                  </Link>
-                  <Link
-                    href={`/children/${child.id}/edit`}
-                    className="text-stone-500 hover:text-stone-700 font-semibold text-sm px-4 py-2 rounded-full hover:bg-stone-50 transition-colors"
-                  >
-                    Edit
-                  </Link>
-                </div>
-              </div>
-            )
-          })}
-        </div>
+        <ChildrenList children={children} />
       ) : (
         <div className="text-center py-16">
           <div className="text-6xl mb-4">??</div>
-          <h2 className="text-2xl font-display font-bold text-stone-900 mb-2">
-            No children yet
-          </h2>
-          <p className="text-stone-500 mb-8">
-            Add a child profile to start their learning journey.
-          </p>
-          <Link
-            href="/children/new"
-            className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-8 py-3 rounded-full transition-all shadow-md"
-          >
+          <h2 className="text-2xl font-display font-bold text-stone-900 mb-2">No children yet</h2>
+          <p className="text-stone-500 mb-8">Add a child profile to start their learning journey.</p>
+          <Link href="/children/new" className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-8 py-3 rounded-full transition-all shadow-md">
             Add First Child
           </Link>
         </div>

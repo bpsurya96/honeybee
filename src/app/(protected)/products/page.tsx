@@ -41,10 +41,10 @@ export default async function ProductsPage() {
                 </p>
                 <div className="flex items-center justify-between">
                   <span className="text-amber-600 font-bold text-lg">
-                    Â£{product.price.toFixed(2)}
+                    Ã‚Â£{product.price.toFixed(2)}
                   </span>
                   <span className="bg-amber-100 text-amber-800 text-xs font-semibold px-3 py-1 rounded-full">
-                    {Math.floor(product.age_min_months / 12)}Â–
+                    {Math.floor(product.age_min_months / 12)}Ã‚â€“
                     {Math.ceil(product.age_max_months / 12)} yrs
                   </span>
                 </div>

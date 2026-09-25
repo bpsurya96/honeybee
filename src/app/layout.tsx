@@ -4,7 +4,7 @@ import './globals.css'
 export const metadata: Metadata = {
   title: {
     template: '%s | HoneyBee Learning',
-    default: 'HoneyBee Learning Â— Early Learning for Little Minds',
+    default: 'HoneyBee Learning Ã‚â€” Early Learning for Little Minds',
   },
   description:
     'A parent-focused personalised learning journey platform for young children aged newborn to 5 years.',

@@ -1,5 +1,5 @@
 // ============================================================
-// HoneyBee Learning Â— Core TypeScript Types
+// HoneyBee Learning Ã‚â€” Core TypeScript Types
 // ============================================================
 
 // ----- Database Row Types -----

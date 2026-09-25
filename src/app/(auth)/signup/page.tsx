@@ -18,7 +18,7 @@ export default function SignupPage() {
             Start your journey
           </h1>
           <p className="text-stone-500 text-sm">
-            Create your free account Â— it takes 30 seconds
+            Create your free account Ã‚â€” it takes 30 seconds
           </p>
         </div>
 

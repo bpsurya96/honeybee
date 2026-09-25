@@ -65,7 +65,7 @@ export default function LandingPage() {
             <p className="text-xl text-stone-500 max-w-2xl mx-auto mb-10 leading-relaxed">
               HoneyBee Learning is a personalised learning journey platform for
               children aged newborn to 5 years. Track progress, discover
-              activities, and get expert guidance Â— all in one place.
+              activities, and get expert guidance Ã‚â€” all in one place.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
@@ -133,12 +133,12 @@ export default function LandingPage() {
             </p>
             <div className="flex flex-wrap justify-center gap-3">
               {[
-                '0Â–6 months',
-                '6Â–12 months',
-                '1Â–2 years',
-                '2Â–3 years',
-                '3Â–4 years',
-                '4Â–5 years',
+                '0Ã‚â€“6 months',
+                '6Ã‚â€“12 months',
+                '1Ã‚â€“2 years',
+                '2Ã‚â€“3 years',
+                '3Ã‚â€“4 years',
+                '4Ã‚â€“5 years',
               ].map((stage) => (
                 <span
                   key={stage}
