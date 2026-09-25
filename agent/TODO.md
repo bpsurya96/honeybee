@@ -16,13 +16,13 @@
 - [x] Update CURRENT_STATUS.md
 
 ## Phase 3 - Orders
-- [ ] Orders list page with real data
-- [ ] Order detail page
-- [ ] Order item with child assignment UI
-- [ ] Assign product to child functionality
-- [ ] My Library view (child's products)
-- [ ] Order service (server-side)
-- [ ] Seed sample orders for demo parent
+- [x] Orders list page with real data
+- [x] Order detail page
+- [x] Order item with child assignment UI
+- [x] Assign product to child functionality
+- [x] My Library view (child's products)
+- [x] Order service (server-side)
+- [x] Seed sample orders for demo parent
 - [ ] Update CURRENT_STATUS.md
 
 ## Phase 4 - Learning Progress

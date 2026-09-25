@@ -1,3 +1,4 @@
+
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import { notFound, redirect } from 'next/navigation'
@@ -38,6 +39,22 @@ export default async function ChildDetailPage({ params }: PageProps) {
     .eq('active', true)
     .order('display_order', { ascending: true })
 
+  // Fetch assigned products (My Library)
+  const { data: assignedProductsData } = await supabase
+    .from('child_products')
+    .select(`
+      id,
+      order_item:order_items(
+        product:products(*)
+      )
+    `)
+    .eq('child_id', id)
+    .eq('active', true)
+
+  const library = (assignedProductsData || [])
+    .map((cp: any) => cp.order_item?.product)
+    .filter(Boolean)
+
   const ageMonths = calculateAgeMonths(child.date_of_birth)
   const ageDisplay = formatAge(ageMonths)
 
@@ -51,6 +68,7 @@ export default async function ChildDetailPage({ params }: PageProps) {
         child={child}
         ageDisplay={ageDisplay}
         skillCategories={skillCategories || []}
+        library={library}
       />
     </div>
   )

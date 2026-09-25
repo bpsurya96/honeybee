@@ -1,5 +1,7 @@
 'use client'
 
+import ProductCard from '@/components/products/ProductCard'
+
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import AvatarUpload from '@/components/ui/AvatarUpload'
@@ -11,6 +13,7 @@ interface ChildDetailClientProps {
   child: Child
   ageDisplay: string
   skillCategories: SkillCategory[]
+  library: any[]
 }
 
 const CATEGORY_COLOURS: Record<string, string> = {
@@ -25,7 +28,7 @@ const CATEGORY_COLOURS: Record<string, string> = {
   'Social & Emotional Learning': 'from-red-400 to-pink-400',
 }
 
-export default function ChildDetailClient({ child, ageDisplay, skillCategories }: ChildDetailClientProps) {
+export default function ChildDetailClient({ child, ageDisplay, skillCategories, library }: ChildDetailClientProps) {
   const router = useRouter()
   const { toasts, removeToast, success, error: showError } = useToast()
 
@@ -106,16 +109,33 @@ export default function ChildDetailClient({ child, ageDisplay, skillCategories }
         </p>
       </div>
 
-      {/* Get Started CTA */}
-      <div className="bg-gradient-to-br from-amber-500 to-orange-500 rounded-3xl p-6 text-white text-center">
-        <div className="text-4xl mb-3">??</div>
-        <h2 className="font-display font-bold text-xl mb-2">Ready to start learning?</h2>
-        <p className="text-amber-100 text-sm mb-4">
-          Browse products and assign activities to {child.name} to begin tracking progress.
-        </p>
-        <Link href="/products" className="bg-white text-amber-600 font-bold px-6 py-2.5 rounded-full text-sm hover:bg-amber-50 transition-colors inline-block">
-          Browse Products
-        </Link>
+      
+      {/* My Library */}
+      <div className="mb-8">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-2xl font-display font-black text-stone-900">
+            My Library
+          </h2>
+        </div>
+        
+        {library && library.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {library.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        ) : (
+          <div className="bg-gradient-to-br from-amber-500 to-orange-500 rounded-3xl p-8 text-white text-center shadow-md">
+            <div className="text-5xl mb-4">??</div>
+            <h2 className="font-display font-bold text-2xl mb-3">Ready to start learning?</h2>
+            <p className="text-amber-50 mb-6 text-lg max-w-lg mx-auto leading-relaxed">
+              Browse products and assign learning kits to {child.name} to begin tracking progress and unlock their digital activities.
+            </p>
+            <Link href="/products" className="bg-white text-amber-600 font-bold px-8 py-3.5 rounded-full text-base hover:bg-amber-50 transition-colors inline-block shadow-sm">
+              Browse Kits
+            </Link>
+          </div>
+        )}
       </div>
 
       <ToastContainer toasts={toasts} onDismiss={removeToast} />

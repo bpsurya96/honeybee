@@ -1,7 +1,7 @@
 # Current Status
 
 ## Current Phase
-Phase 3 - Orders (Starting)
+Phase 4 - Learning Progress & Skills (Starting)
 
 ## Completed
 
@@ -31,16 +31,21 @@ Phase 3 - Orders (Starting)
 - Skills display (badge components)
 - Age range display component
 
+### Phase 3 - Orders (COMPLETE)
+- Orders list page with real data
+- Order detail page
+- Order item with child assignment UI
+- Assign product to child functionality
+- My Library view (child's products)
+
 ## In Progress
-Phase 3 begins next.
+Phase 4 begins next.
 
 ## Next
-- Phase 3: Orders
-  - Orders list page with real data
-  - Order detail page
-  - Order item with child assignment UI
-  - Assign product to child functionality
-  - My Library view (child's products)
+- Phase 4: Learning Progress & Skills
+  - Dashboard skills spiderweb/radar chart
+  - Activity completion logging API
+  - Update dashboard metrics on completion
 
 ## Important Decisions
 - Middleware uses proxy (Next.js 16)
