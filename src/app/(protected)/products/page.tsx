@@ -1,64 +1,56 @@
+
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
+import ProductCard from '@/components/products/ProductCard'
+import type { Product, Skill } from '@/types'
 
 export const metadata: Metadata = {
-  title: 'Products',
+  title: 'Products | HoneyBee Learning',
 }
 
 export default async function ProductsPage() {
   const supabase = await createClient()
-  const { data: products } = await supabase
+
+  // Fetch all active products
+  const { data: productsData } = await supabase
     .from('products')
-    .select('*')
+    .select(`
+      *,
+      product_skills (
+        skills (*)
+      )
+    `)
     .eq('active', true)
-    .order('created_at', { ascending: true })
+    .order('age_min_months', { ascending: true })
+
+  // Transform data
+  const products = (productsData || []).map(p => ({
+    ...p,
+    skills: p.product_skills.map((ps: any) => ps.skills).filter(Boolean) as Skill[]
+  }))
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6">
-      <h1 className="text-3xl font-display font-black text-stone-900 mb-2">
-        Learning Products
-      </h1>
-      <p className="text-stone-500 mb-8">
-        Browse our curated collection of early learning products.
-      </p>
+    <div className="max-w-6xl mx-auto px-4 py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl md:text-4xl font-display font-black text-stone-900 mb-3">
+          Learning Kits
+        </h1>
+        <p className="text-stone-500 max-w-2xl text-lg">
+          Expert-designed physical products paired with digital activities to accelerate your child's development.
+        </p>
+      </div>
 
-      {products && products.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
-          {products.map((product) => (
-            <div
-              key={product.id}
-              className="bg-white rounded-3xl overflow-hidden shadow-sm border border-stone-100 hover:shadow-md hover:-translate-y-0.5 transition-all"
-            >
-              <div className="bg-gradient-to-br from-amber-100 to-orange-100 h-40 flex items-center justify-center text-6xl">??</div>
-              <div className="p-5">
-                <h3 className="font-display font-bold text-stone-900 mb-1">
-                  {product.name}
-                </h3>
-                <p className="text-stone-500 text-sm mb-3 line-clamp-2">
-                  {product.description}
-                </p>
-                <div className="flex items-center justify-between">
-                  <span className="text-amber-600 font-bold text-lg">
-                    Ã‚�{product.price.toFixed(2)}
-                  </span>
-                  <span className="bg-amber-100 text-amber-800 text-xs font-semibold px-3 py-1 rounded-full">
-                    {Math.floor(product.age_min_months / 12)}Ã‚â€“
-                    {Math.ceil(product.age_max_months / 12)} yrs
-                  </span>
-                </div>
-              </div>
-            </div>
+      {products.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {products.map(product => (
+            <ProductCard key={product.id} product={product} />
           ))}
         </div>
       ) : (
-        <div className="text-center py-16">
+        <div className="text-center py-20 bg-white rounded-3xl border border-stone-100">
           <div className="text-6xl mb-4">??</div>
-          <h2 className="text-xl font-display font-bold text-stone-900 mb-2">
-            Products coming soon
-          </h2>
-          <p className="text-stone-500">
-            Run the seed data to populate products, or connect your Supabase database.
-          </p>
+          <h2 className="text-2xl font-display font-bold text-stone-900 mb-2">Coming Soon</h2>
+          <p className="text-stone-500">We are busy creating new learning kits. Check back later!</p>
         </div>
       )}
     </div>

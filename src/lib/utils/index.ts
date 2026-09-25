@@ -85,3 +85,15 @@ export function getInitials(name: string): string {
     .join('')
     .toUpperCase()
 }
+
+
+export function formatAgeRange(minMonths: number, maxMonths: number): string {
+  if (minMonths === 0 && maxMonths === 6) return '0-6m'
+  if (minMonths === 6 && maxMonths === 12) return '6-12m'
+  
+  const minYears = Math.floor(minMonths / 12)
+  const maxYears = Math.floor(maxMonths / 12)
+  
+  if (minYears === maxYears) return `${minYears}y+`
+  return `${minYears}-${maxYears}y`
+}
