@@ -30,6 +30,14 @@ export default function OnboardingFlow({ firstName }: OnboardingFlowProps) {
       const { data: { user } } = await supabase.auth.getUser()
       if (!user) { router.push('/login'); return }
 
+      
+      // Ensure profile exists to satisfy foreign key constraints
+      await supabase.from('profiles').upsert({ 
+        id: user.id, 
+        full_name: user.user_metadata?.full_name || 'Parent',
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'id' });
+      
       const { error } = await supabase.from('children').insert({
         name: name.trim(),
         date_of_birth: dateOfBirth,
@@ -58,7 +66,7 @@ export default function OnboardingFlow({ firstName }: OnboardingFlowProps) {
 
         {step === 1 ? (
           <div className="text-center animate-fade-in">
-            <div className="text-7xl mb-4">??</div>
+            <div className="text-7xl mb-4">👶</div>
             <h1 className="text-3xl font-display font-black text-stone-900 mb-3">
               Welcome, {firstName}!
             </h1>
@@ -76,7 +84,7 @@ export default function OnboardingFlow({ firstName }: OnboardingFlowProps) {
         ) : (
           <div className="animate-fade-in">
             <button onClick={() => setStep(1)} className="text-stone-500 hover:text-stone-700 text-sm font-medium mb-4 inline-flex items-center gap-1">
-              ? Back
+              ← Back
             </button>
             <h2 className="text-2xl font-display font-black text-stone-900 mb-1">Tell us about your child</h2>
             <p className="text-stone-500 mb-6 text-sm">This helps us personalise their learning journey.</p>

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { NextRequest, NextResponse } from 'next/server'
 import { createClient } from '@/lib/supabase/server'
@@ -50,7 +51,7 @@ export async function POST(request: NextRequest) {
         order_item_id,
         child_id,
         active: true
-      }, { onConflict: 'order_item_id' })
+      }, { onConflict: 'child_id,order_item_id' })
       .select()
       .single()
 

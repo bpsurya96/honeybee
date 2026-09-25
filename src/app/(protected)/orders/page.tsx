@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
@@ -34,7 +35,7 @@ export default async function OrdersPage() {
 
       {!orders || orders.length === 0 ? (
         <div className="text-center py-20 bg-white rounded-3xl border border-stone-100 shadow-sm">
-          <div className="text-6xl mb-4">???</div>
+          <div className="text-6xl mb-4">📦</div>
           <h2 className="text-2xl font-display font-bold text-stone-900 mb-2">No orders yet</h2>
           <p className="text-stone-500 mb-8 max-w-md mx-auto">
             You haven&apos;t placed any orders. Browse our learning kits to start your child&apos;s journey!

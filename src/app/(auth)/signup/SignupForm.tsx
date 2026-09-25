@@ -1,12 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 
 export default function SignupForm() {
-  const router = useRouter()
-  const [fullName, setFullName] = useState('')
+    const [fullName, setFullName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -53,7 +51,7 @@ export default function SignupForm() {
   if (success) {
     return (
       <div className="text-center py-4">
-        <div className="text-5xl mb-4">??</div>
+        <div className="text-5xl mb-4">🎉</div>
         <h2 className="font-display font-bold text-xl text-stone-900 mb-2">
           Check your email!
         </h2>

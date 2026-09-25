@@ -48,7 +48,15 @@ export default function ChildForm({ initialData }: ChildFormProps) {
         const supabase = createClient()
         const { data: { user } } = await supabase.auth.getUser()
         if (!user) { router.push('/login'); return }
-        const { error } = await supabase.from('children').insert({
+        
+      // Ensure profile exists to satisfy foreign key constraints
+      await supabase.from('profiles').upsert({ 
+        id: user.id, 
+        full_name: user.user_metadata?.full_name || 'Parent',
+        updated_at: new Date().toISOString()
+      }, { onConflict: 'id' });
+      
+      const { error } = await supabase.from('children').insert({
           name: name.trim(), date_of_birth: dateOfBirth, gender: gender || null, parent_id: user.id,
         })
         if (error) { setError(error.message); return }

@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
-import { calculateAgeMonths, formatAge } from '@/lib/utils'
 import ChildrenList from './ChildrenList'
 
 export const metadata: Metadata = {
@@ -31,10 +30,10 @@ export default async function ChildrenPage() {
       </div>
 
       {children && children.length > 0 ? (
-        <ChildrenList children={children} />
+        <ChildrenList childProfiles={children} />
       ) : (
         <div className="text-center py-16">
-          <div className="text-6xl mb-4">??</div>
+          <div className="text-6xl mb-4">👶</div>
           <h2 className="text-2xl font-display font-bold text-stone-900 mb-2">No children yet</h2>
           <p className="text-stone-500 mb-8">Add a child profile to start their learning journey.</p>
           <Link href="/children/new" className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-8 py-3 rounded-full transition-all shadow-md">

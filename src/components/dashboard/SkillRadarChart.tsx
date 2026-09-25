@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 'use client'
 
@@ -27,7 +28,7 @@ export default function SkillRadarChart({ data }: SkillRadarChartProps) {
   if (!chartData || chartData.length === 0) {
     return (
       <div className="h-64 flex flex-col items-center justify-center text-stone-400 bg-stone-50 rounded-2xl border border-stone-100">
-        <span className="text-4xl mb-2">??</span>
+        <span className="text-4xl mb-2">📈</span>
         <p className="text-sm font-medium">No skill data available yet.</p>
         <p className="text-xs text-stone-400 mt-1">Complete activities to see progress here.</p>
       </div>

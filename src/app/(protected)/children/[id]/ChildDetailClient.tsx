@@ -1,6 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import SkillRadarChart from '@/components/dashboard/SkillRadarChart'
 import type { SkillProgress } from '@/types'
 
 import ProductCard from '@/components/products/ProductCard'
@@ -73,10 +73,10 @@ export default function ChildDetailClient({ child, ageDisplay, skillCategories, 
       {/* Stats */}
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
         {[
-          { label: 'Activities Done', value: '0', icon: '?' },
-          { label: 'Products', value: '0', icon: '??' },
-          { label: 'Streak', value: '0 days', icon: '??' },
-          { label: 'Progress', value: '0%', icon: '??' },
+          { label: 'Activities Done', value: '0', icon: '📦' },
+          { label: 'Products', value: '0', icon: '📦' },
+          { label: 'Streak', value: '0 days', icon: '🔥' },
+          { label: 'Progress', value: '0%', icon: '📈' },
         ].map((stat) => (
           <div key={stat.label} className="bg-white rounded-2xl p-4 shadow-sm border border-stone-100 text-center">
             <div className="text-2xl mb-1">{stat.icon}</div>
@@ -130,7 +130,7 @@ export default function ChildDetailClient({ child, ageDisplay, skillCategories, 
           </div>
         ) : (
           <div className="bg-gradient-to-br from-amber-500 to-orange-500 rounded-3xl p-8 text-white text-center shadow-md">
-            <div className="text-5xl mb-4">??</div>
+            <div className="text-5xl mb-4">🎨</div>
             <h2 className="font-display font-bold text-2xl mb-3">Ready to start learning?</h2>
             <p className="text-amber-50 mb-6 text-lg max-w-lg mx-auto leading-relaxed">
               Browse products and assign learning kits to {child.name} to begin tracking progress and unlock their digital activities.

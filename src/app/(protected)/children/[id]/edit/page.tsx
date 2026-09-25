@@ -36,7 +36,7 @@ export default async function EditChildPage({ params }: PageProps) {
         href={`/children/${child.id}`}
         className="text-stone-500 hover:text-stone-700 text-sm font-medium mb-4 inline-flex items-center gap-1"
       >
-        ? Back to {child.name}
+        ← Back to {child.name}
       </Link>
       <h1 className="text-3xl font-display font-black text-stone-900 mb-2 mt-2">
         Edit {child.name}

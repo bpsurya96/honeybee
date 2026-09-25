@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 'use client'
 
 import Link from 'next/link'
@@ -36,7 +37,7 @@ export default function AppHeader({ user }: AppHeaderProps) {
       .eq('parent_id', user.id)
       .order('created_at', { ascending: true })
       .then(({ data }) => { if (data) setChildren(data) })
-  }, [user.id])
+   }, [user.id, pathname])
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -54,7 +55,7 @@ export default function AppHeader({ user }: AppHeaderProps) {
       <div className="max-w-6xl mx-auto px-4 h-full flex items-center justify-between">
         {/* Logo */}
         <Link href="/dashboard" className="flex items-center gap-2 shrink-0">
-          <span className="text-2xl">??</span>
+          <span className="text-2xl">🐝</span>
           <span className="font-display font-800 text-lg text-stone-900 hidden sm:block">
             HoneyBee<span className="text-amber-500"> Learning</span>
           </span>

@@ -7,7 +7,7 @@ export default function LandingPage() {
       <header className="fixed top-0 left-0 right-0 z-50 bg-white/80 backdrop-blur-md border-b border-amber-100">
         <div className="max-w-6xl mx-auto px-4 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="text-3xl">??</span>
+            <span className="text-3xl">🐝</span>
             <span className="font-display font-800 text-xl text-stone-900">
               HoneyBee<span className="text-amber-500"> Learning</span>
             </span>
@@ -55,7 +55,7 @@ export default function LandingPage() {
           {/* Hero */}
           <div className="text-center mb-20 animate-fade-in">
             <div className="inline-flex items-center gap-2 bg-amber-100 text-amber-800 px-4 py-2 rounded-full text-sm font-medium mb-6">
-              <span>??</span>
+              <span>🐝</span>
               <span>Supporting little learners, one activity at a time</span>
             </div>
             <h1 className="text-5xl md:text-7xl font-display font-black text-stone-900 mb-6 leading-tight">
@@ -73,7 +73,7 @@ export default function LandingPage() {
                 className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-8 py-4 rounded-full text-lg transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 inline-flex items-center gap-2 justify-center"
               >
                 <span>Start Your Journey</span>
-                <span>?</span>
+                <span>🐝</span>
               </Link>
               <Link
                 href="/products"
@@ -88,19 +88,19 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
             {[
               {
-                icon: '?',
+                icon: '📦',
                 title: 'Curated Activities',
                 description:
                   'Expertly designed activities for every age and stage, from newborn to 5 years.',
               },
               {
-                icon: '?',
+                icon: '🔥',
                 title: 'Track Progress',
                 description:
                   'See exactly which skills your child is developing across 9 learning areas.',
               },
               {
-                icon: '?',
+                icon: '📈',
                 title: 'HoneyBee Coach',
                 description:
                   'Your AI learning assistant that guides you with personalised, age-appropriate advice.',
@@ -160,15 +160,15 @@ export default function LandingPage() {
             </p>
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {[
-                { icon: '?', name: 'Fine Motor Skills' },
-                { icon: '?', name: 'Language & Communication' },
-                { icon: '?', name: 'Early Numeracy' },
-                { icon: '?', name: 'Cognitive Skills' },
-                { icon: '?', name: 'Problem Solving' },
-                { icon: '?', name: 'Creativity' },
-                { icon: '?', name: 'Pre-writing' },
-                { icon: '?', name: 'Sensory Exploration' },
-                { icon: '?', name: 'Social & Emotional' },
+                { icon: '🎨', name: 'Fine Motor Skills' },
+                { icon: '🗣️', name: 'Language & Communication' },
+                { icon: '🔢', name: 'Early Numeracy' },
+                { icon: '🧠', name: 'Cognitive Skills' },
+                { icon: '🧩', name: 'Problem Solving' },
+                { icon: '🎭', name: 'Creativity' },
+                { icon: '✍️', name: 'Pre-writing' },
+                { icon: '🖐️', name: 'Sensory Exploration' },
+                { icon: '🤝', name: 'Social & Emotional' },
               ].map((area) => (
                 <div
                   key={area.name}
@@ -185,7 +185,7 @@ export default function LandingPage() {
 
           {/* CTA */}
           <div className="text-center bg-gradient-to-br from-amber-500 to-orange-500 rounded-3xl p-12 shadow-xl">
-            <div className="text-5xl mb-4">??</div>
+            <div className="text-5xl mb-4">🐝</div>
             <h2 className="text-3xl md:text-4xl font-display font-black text-white mb-4">
               Ready to start your child&apos;s learning journey?
             </h2>
@@ -198,7 +198,7 @@ export default function LandingPage() {
               className="bg-white text-amber-600 font-bold px-8 py-4 rounded-full text-lg hover:bg-amber-50 transition-colors shadow-lg inline-flex items-center gap-2"
             >
               <span>Create Free Account</span>
-              <span>?</span>
+              <span>🐝</span>
             </Link>
           </div>
         </div>
@@ -208,7 +208,7 @@ export default function LandingPage() {
       <footer className="bg-stone-900 text-stone-400 py-12">
         <div className="max-w-6xl mx-auto px-4 text-center">
           <div className="flex items-center justify-center gap-2 mb-4">
-            <span className="text-2xl">??</span>
+            <span className="text-2xl">🐝</span>
             <span className="font-display font-bold text-white text-lg">
               HoneyBee Learning
             </span>

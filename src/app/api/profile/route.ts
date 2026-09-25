@@ -34,8 +34,7 @@ export async function PUT(request: NextRequest) {
 
   const { data, error } = await supabase
     .from('profiles')
-    .update({ full_name: parsed.data.full_name, updated_at: new Date().toISOString() })
-    .eq('id', user.id)
+    .upsert({ id: user.id, full_name: parsed.data.full_name, updated_at: new Date().toISOString() })
     .select()
     .single()
 

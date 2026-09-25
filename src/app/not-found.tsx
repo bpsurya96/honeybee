@@ -4,7 +4,7 @@ export default function NotFound() {
   return (
     <div className="min-h-screen bg-amber-50 flex items-center justify-center px-4">
       <div className="text-center max-w-md">
-        <div className="text-8xl mb-6">??</div>
+        <div className="text-8xl mb-6">🐝</div>
         <h1 className="text-4xl font-display font-black text-stone-900 mb-3">
           Lost your way?
         </h1>

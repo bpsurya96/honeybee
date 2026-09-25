@@ -16,7 +16,7 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
       className="bg-white rounded-2xl p-5 shadow-sm border border-stone-100 flex gap-4 items-start hover:shadow-md hover:border-amber-200 transition-all group"
     >
       <div className="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center text-3xl shrink-0 overflow-hidden relative group-hover:scale-105 transition-transform">
-        <span>?</span>
+        <span>🧸</span>
       </div>
       <div className="flex-1">
         <div className="flex justify-between items-start gap-2 mb-1">

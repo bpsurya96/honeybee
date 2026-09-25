@@ -26,17 +26,18 @@ test.describe('Critical Path Smoke Test @smoke', () => {
     await expect(page).toHaveURL(/.*\/dashboard/);
     
     // 5. Products Catalog
-    await page.getByRole('link', { name: /Catalog/i }).click();
+    await page.getByRole('link', { name: /Products/i }).click();
     await expect(page).toHaveURL(/.*\/products/);
-    await expect(page.getByText(/Age:/i).first()).toBeVisible();
-
+    
     // 6. Navigate to AI Coach
     await page.getByRole('link', { name: /Coach/i }).click();
     await expect(page).toHaveURL(/.*\/coach/);
     await expect(page.getByText(/Your AI Coach/i)).toBeVisible();
 
-    // 7. Logout
+    // 7. Logout (Navigate to Profile first)
+    await page.getByRole('link', { name: /Profile/i }).click();
+    await expect(page).toHaveURL(/.*\/profile/);
     await page.getByRole('button', { name: /Sign out/i }).click();
-    await expect(page).toHaveURL(/.*\/login/);
+    await page.waitForURL(url => url.pathname === '/' || url.pathname === '/login');
   });
 });

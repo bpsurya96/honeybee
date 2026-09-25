@@ -45,7 +45,7 @@ export default function ActivityCompletionButton({ activityId, durationMins, chi
       if (!res.ok) throw new Error('Failed to update status')
       
       if (!isCompletedBySelected) {
-        success('Activity marked as complete! ??')
+        success('Activity marked as complete! 🎉')
       }
       router.refresh()
     } catch (e) {
@@ -57,7 +57,15 @@ export default function ActivityCompletionButton({ activityId, durationMins, chi
 
   if (childrenList.length === 0) {
     return (
-      <p className="text-stone-500 text-sm">Assign kits to your children to track progress.</p>
+      <div className="flex flex-col items-center gap-3">
+        <p className="text-stone-500 text-sm font-medium">You need a child profile to track activity progress.</p>
+        <button 
+          onClick={() => router.push('/children/new')}
+          className="bg-amber-100 hover:bg-amber-200 text-amber-700 font-bold px-6 py-2.5 rounded-full transition-colors text-sm"
+        >
+          Create Child Profile
+        </button>
+      </div>
     )
   }
 

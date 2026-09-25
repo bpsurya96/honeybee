@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-img-element */
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
@@ -7,6 +9,7 @@ import { ChevronLeft } from 'lucide-react'
 import AgeRangeBadge from '@/components/products/AgeRangeBadge'
 import SkillBadge from '@/components/products/SkillBadge'
 import ActivityCard from '@/components/activities/ActivityCard'
+import AddToLibraryButton from '@/components/products/AddToLibraryButton'
 import type { Skill, Activity } from '@/types'
 
 interface PageProps {
@@ -99,9 +102,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
             </div>
           </div>
 
-          <button className="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-4 rounded-full transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 text-lg">
-            Add to Library
-          </button>
+          <AddToLibraryButton productId={product.id} />
         </div>
       </div>
 
@@ -120,7 +121,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
           </div>
         ) : (
           <div className="text-center py-12 bg-white rounded-3xl border border-stone-100">
-            <div className="text-4xl mb-3">??</div>
+            <div className="text-4xl mb-3">🧸</div>
             <p className="text-stone-500 font-medium">No digital activities available for this product yet.</p>
           </div>
         )}

@@ -10,7 +10,7 @@ export default function AuthLayout({
       {/* Header */}
       <header className="p-6">
         <Link href="/" className="flex items-center gap-2 w-fit">
-          <span className="text-2xl">??</span>
+          <span className="text-2xl">🐝</span>
           <span className="font-display font-800 text-lg text-stone-900">
             HoneyBee<span className="text-amber-500"> Learning</span>
           </span>

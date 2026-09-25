@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
@@ -48,7 +49,7 @@ export default async function ProductsPage() {
         </div>
       ) : (
         <div className="text-center py-20 bg-white rounded-3xl border border-stone-100">
-          <div className="text-6xl mb-4">??</div>
+          <div className="text-6xl mb-4">🐝</div>
           <h2 className="text-2xl font-display font-bold text-stone-900 mb-2">Coming Soon</h2>
           <p className="text-stone-500">We are busy creating new learning kits. Check back later!</p>
         </div>

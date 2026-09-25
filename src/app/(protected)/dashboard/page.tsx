@@ -34,7 +34,7 @@ export default async function DashboardPage() {
       {/* Welcome */}
       <div className="mb-8">
         <h1 className="text-3xl font-display font-black text-stone-900">
-          Hello, {firstName}! ??
+          Hello, {firstName}! 👋
         </h1>
         <p className="text-stone-500 mt-1">
           Here&apos;s your family&apos;s learning overview.
@@ -96,7 +96,7 @@ export default async function DashboardPage() {
       ) : (
         /* Empty State */
         <div className="text-center py-16">
-          <div className="text-6xl mb-4">??</div>
+          <div className="text-6xl mb-4">👶</div>
           <h2 className="text-2xl font-display font-bold text-stone-900 mb-2">
             Add your first child
           </h2>
@@ -109,7 +109,7 @@ export default async function DashboardPage() {
             className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-8 py-3 rounded-full transition-all shadow-md hover:shadow-lg inline-flex items-center gap-2"
           >
             <span>Add First Child</span>
-            <span>?</span>
+            <span>🚀</span>
           </Link>
         </div>
       )}
