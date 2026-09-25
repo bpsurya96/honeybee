@@ -5,15 +5,15 @@
 - [x] Parent + Children (Complete)
 
 ## Phase 2 - Products + Activities
-- [ ] Product listing page with real data
-- [ ] Product card component
-- [ ] Product detail page
-- [ ] Activity list (within product)
-- [ ] Activity detail component
-- [ ] Skills display (badge components)
-- [ ] Age range display component
-- [ ] Verify seed data (3+ products with activities and skills)
-- [ ] Update CURRENT_STATUS.md
+- [x] Product listing page with real data
+- [x] Product card component
+- [x] Product detail page
+- [x] Activity list (within product)
+- [x] Activity detail component
+- [x] Skills display (badge components)
+- [x] Age range display component
+- [x] Verify seed data (3+ products with activities and skills)
+- [x] Update CURRENT_STATUS.md
 
 ## Phase 3 - Orders
 - [ ] Orders list page with real data

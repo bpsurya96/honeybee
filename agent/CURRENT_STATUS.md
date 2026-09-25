@@ -1,7 +1,7 @@
 # Current Status
 
 ## Current Phase
-Phase 2 - Products + Activities (Starting)
+Phase 3 - Orders (Starting)
 
 ## Completed
 
@@ -22,18 +22,25 @@ Phase 2 - Products + Activities (Starting)
 - Fully scaffolded Next.js 16 + Tailwind CSS v4 app
 - Setup database migrations and design systems
 
+### Phase 2 - Products + Activities (COMPLETE)
+- Product listing page with real data
+- Product card component
+- Product detail page
+- Activity list (within product)
+- Activity detail component
+- Skills display (badge components)
+- Age range display component
+
 ## In Progress
-Phase 2 begins next.
+Phase 3 begins next.
 
 ## Next
-- Phase 2: Products + Activities
-  - Product listing page with real data
-  - Product card component
-  - Product detail page
-  - Activity list (within product)
-  - Activity detail component
-  - Skills display (badge components)
-  - Age range display component
+- Phase 3: Orders
+  - Orders list page with real data
+  - Order detail page
+  - Order item with child assignment UI
+  - Assign product to child functionality
+  - My Library view (child's products)
 
 ## Important Decisions
 - Middleware uses proxy (Next.js 16)
