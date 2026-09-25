@@ -26,7 +26,7 @@ export default async function CoachPage() {
           Your AI Coach
         </h1>
         <p className="text-stone-500">
-          Ask questions about your child's development, get activity ideas, or seek parenting advice.
+          Ask questions about your child&apos;s development, get activity ideas, or seek parenting advice.
         </p>
       </div>
 

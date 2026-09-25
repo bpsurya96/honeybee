@@ -64,9 +64,9 @@ export default function CoachClient({ childrenList }: CoachClientProps) {
             <div className="w-20 h-20 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center mb-6 shadow-sm border border-amber-200">
               <Bot size={40} />
             </div>
-            <h2 className="text-2xl font-display font-bold text-stone-900 mb-3">Hi, I'm HoneyBee Coach!</h2>
+            <h2 className="text-2xl font-display font-bold text-stone-900 mb-3">Hi, I&apos;m HoneyBee Coach!</h2>
             <p className="text-stone-500 text-lg leading-relaxed mb-8">
-              I can help you interpret your child's learning progress, suggest offline activities, or answer any parenting questions.
+              I can help you interpret your child&apos;s learning progress, suggest offline activities, or answer any parenting questions.
             </p>
             <div className="flex flex-wrap gap-2 justify-center">
               {['What games build motor skills?', 'How to handle tantrums?', 'Explain cognitive development'].map(suggestion => (

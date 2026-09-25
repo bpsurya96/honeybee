@@ -36,7 +36,7 @@ export default async function ProductsPage() {
           Learning Kits
         </h1>
         <p className="text-stone-500 max-w-2xl text-lg">
-          Expert-designed physical products paired with digital activities to accelerate your child's development.
+          Expert-designed physical products paired with digital activities to accelerate your child&apos;s development.
         </p>
       </div>
 

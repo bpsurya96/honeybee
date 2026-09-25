@@ -37,7 +37,7 @@ export default async function OrdersPage() {
           <div className="text-6xl mb-4">???</div>
           <h2 className="text-2xl font-display font-bold text-stone-900 mb-2">No orders yet</h2>
           <p className="text-stone-500 mb-8 max-w-md mx-auto">
-            You haven't placed any orders. Browse our learning kits to start your child's journey!
+            You haven&apos;t placed any orders. Browse our learning kits to start your child&apos;s journey!
           </p>
           <Link href="/products" className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-8 py-3 rounded-full transition-all shadow-md inline-block">
             Browse Kits
