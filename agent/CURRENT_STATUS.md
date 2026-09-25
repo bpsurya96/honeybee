@@ -1,7 +1,7 @@
 # Current Status
 
 ## Current Phase
-Phase 4 - Learning Progress & Skills (Starting)
+Phase 5 - AI Coach / Parent Support (Starting)
 
 ## Completed
 
@@ -38,14 +38,19 @@ Phase 4 - Learning Progress & Skills (Starting)
 - Assign product to child functionality
 - My Library view (child's products)
 
+### Phase 4 - Learning Progress & Skills (COMPLETE)
+- Dashboard skills spiderweb/radar chart
+- Activity completion logging API
+- Update dashboard metrics on completion
+
 ## In Progress
-Phase 4 begins next.
+Phase 5 begins next.
 
 ## Next
-- Phase 4: Learning Progress & Skills
-  - Dashboard skills spiderweb/radar chart
-  - Activity completion logging API
-  - Update dashboard metrics on completion
+- Phase 5: AI Coach / Parent Support
+  - Gemini AI integration for /coach route
+  - RAG prompt construction using child data
+  - Chat interface UI
 
 ## Important Decisions
 - Middleware uses proxy (Next.js 16)

@@ -6,6 +6,7 @@ import Link from 'next/link'
 import { ChevronLeft, Play, Clock, CheckCircle2 } from 'lucide-react'
 import SkillBadge from '@/components/products/SkillBadge'
 import type { Skill } from '@/types'
+import ActivityCompletionButton from './ActivityCompletionButton'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -36,6 +37,12 @@ export default async function ActivityDetailPage({ params }: PageProps) {
 
   if (!activityData) notFound()
 
+  
+  const { data: { user } } = await supabase.auth.getUser()
+  const { data: childrenData } = await supabase.from('children').select('id, name, avatar_url').eq('parent_id', user!.id)
+  const { data: completions } = await supabase.from('child_activities').select('child_id').eq('activity_id', id).eq('completed', true)
+  const completedBy = (completions || []).map((c: any) => c.child_id)
+  
   const activity = {
     ...activityData,
     skills: activityData.activity_skills.map((as: any) => as.skills).filter(Boolean) as Skill[]
@@ -101,11 +108,12 @@ export default async function ActivityDetailPage({ params }: PageProps) {
           )}
 
           <div className="border-t border-stone-100 pt-8 mt-4 text-center">
-            {/* We'll make this interactive in Phase 4 */}
-            <button className="inline-flex items-center gap-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-8 py-4 rounded-full transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 text-lg">
-              <CheckCircle2 size={24} />
-              Mark as Complete
-            </button>
+            <ActivityCompletionButton 
+              activityId={activity.id}
+              durationMins={activity.duration_mins}
+              childrenList={childrenData || []}
+              completedBy={completedBy}
+            />
           </div>
         </div>
       </div>

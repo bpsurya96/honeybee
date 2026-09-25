@@ -1,5 +1,8 @@
 'use client'
 
+import SkillRadarChart from '@/components/dashboard/SkillRadarChart'
+import type { SkillProgress } from '@/types'
+
 import ProductCard from '@/components/products/ProductCard'
 
 import { useRouter } from 'next/navigation'
@@ -14,6 +17,7 @@ interface ChildDetailClientProps {
   ageDisplay: string
   skillCategories: SkillCategory[]
   library: any[]
+  skillProgress: SkillProgress[]
 }
 
 const CATEGORY_COLOURS: Record<string, string> = {
@@ -28,7 +32,7 @@ const CATEGORY_COLOURS: Record<string, string> = {
   'Social & Emotional Learning': 'from-red-400 to-pink-400',
 }
 
-export default function ChildDetailClient({ child, ageDisplay, skillCategories, library }: ChildDetailClientProps) {
+export default function ChildDetailClient({ child, ageDisplay, skillCategories, library, skillProgress }: ChildDetailClientProps) {
   const router = useRouter()
   const { toasts, removeToast, success, error: showError } = useToast()
 
