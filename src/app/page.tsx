@@ -88,19 +88,19 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-20">
             {[
               {
-                icon: '??',
+                icon: '?',
                 title: 'Curated Activities',
                 description:
                   'Expertly designed activities for every age and stage, from newborn to 5 years.',
               },
               {
-                icon: '??',
+                icon: '?',
                 title: 'Track Progress',
                 description:
                   'See exactly which skills your child is developing across 9 learning areas.',
               },
               {
-                icon: '??',
+                icon: '?',
                 title: 'HoneyBee Coach',
                 description:
                   'Your AI learning assistant that guides you with personalised, age-appropriate advice.',
@@ -161,14 +161,14 @@ export default function LandingPage() {
             <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
               {[
                 { icon: '?', name: 'Fine Motor Skills' },
-                { icon: '??', name: 'Language & Communication' },
-                { icon: '??', name: 'Early Numeracy' },
-                { icon: '??', name: 'Cognitive Skills' },
-                { icon: '??', name: 'Problem Solving' },
-                { icon: '??', name: 'Creativity' },
-                { icon: '??', name: 'Pre-writing' },
-                { icon: '??', name: 'Sensory Exploration' },
-                { icon: '??', name: 'Social & Emotional' },
+                { icon: '?', name: 'Language & Communication' },
+                { icon: '?', name: 'Early Numeracy' },
+                { icon: '?', name: 'Cognitive Skills' },
+                { icon: '?', name: 'Problem Solving' },
+                { icon: '?', name: 'Creativity' },
+                { icon: '?', name: 'Pre-writing' },
+                { icon: '?', name: 'Sensory Exploration' },
+                { icon: '?', name: 'Social & Emotional' },
               ].map((area) => (
                 <div
                   key={area.name}

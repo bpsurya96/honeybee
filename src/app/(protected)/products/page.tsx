@@ -29,9 +29,7 @@ export default async function ProductsPage() {
               key={product.id}
               className="bg-white rounded-3xl overflow-hidden shadow-sm border border-stone-100 hover:shadow-md hover:-translate-y-0.5 transition-all"
             >
-              <div className="bg-gradient-to-br from-amber-100 to-orange-100 h-40 flex items-center justify-center text-6xl">
-                ??
-              </div>
+              <div className="bg-gradient-to-br from-amber-100 to-orange-100 h-40 flex items-center justify-center text-6xl">??</div>
               <div className="p-5">
                 <h3 className="font-display font-bold text-stone-900 mb-1">
                   {product.name}
@@ -41,7 +39,7 @@ export default async function ProductsPage() {
                 </p>
                 <div className="flex items-center justify-between">
                   <span className="text-amber-600 font-bold text-lg">
-                    Ã‚Â£{product.price.toFixed(2)}
+                    Ã‚�{product.price.toFixed(2)}
                   </span>
                   <span className="bg-amber-100 text-amber-800 text-xs font-semibold px-3 py-1 rounded-full">
                     {Math.floor(product.age_min_months / 12)}Ã‚â€“
