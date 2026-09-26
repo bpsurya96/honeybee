@@ -1,5 +1,5 @@
 -- ============================================================
--- HoneyBee Learning � Seed Data
+-- HoneyBee Learning � Seed Data
 -- Demo data only. Mark clearly as demo.
 -- ============================================================
 
@@ -15,15 +15,15 @@ ON CONFLICT DO NOTHING;
 
 -- ---- Skill Categories ----
 INSERT INTO skill_categories (name, description, icon, colour, display_order) VALUES
-    ('Fine Motor Skills',               'Hand and finger strength, coordination, and dexterity.',         '?', '#f59e0b', 1),
-    ('Language & Communication',        'Listening, speaking, vocabulary, and early literacy.',           '??', '#3b82f6', 2),
-    ('Early Numeracy',                  'Counting, number recognition, sorting, and patterns.',           '??', '#10b981', 3),
-    ('Cognitive Skills',                'Memory, attention, sequencing, and reasoning.',                  '??', '#8b5cf6', 4),
-    ('Problem Solving',                 'Puzzles, cause-and-effect, and spatial reasoning.',              '??', '#f97316', 5),
-    ('Creativity',                      'Art, imagination, music, and open-ended play.',                  '??', '#ec4899', 6),
-    ('Pre-writing',                     'Pencil grip, line tracing, shapes, and letter formation.',       '??', '#06b6d4', 7),
-    ('Sensory Exploration',             'Touch, texture, sound, smell, and visual discovery.',            '??', '#84cc16', 8),
-    ('Social & Emotional Learning',     'Sharing, empathy, turn-taking, and self-regulation.',            '??', '#ef4444', 9)
+    ('Fine Motor Skills',               'Hand and finger strength, coordination, and dexterity.',         '🎨', '#f59e0b', 1),
+    ('Language & Communication',        'Listening, speaking, vocabulary, and early literacy.',           '🗣️', '#3b82f6', 2),
+    ('Early Numeracy',                  'Counting, number recognition, sorting, and patterns.',           '🔢', '#10b981', 3),
+    ('Cognitive Skills',                'Memory, attention, sequencing, and reasoning.',                  '🧠', '#8b5cf6', 4),
+    ('Problem Solving',                 'Puzzles, cause-and-effect, and spatial reasoning.',              '🧩', '#f97316', 5),
+    ('Creativity',                      'Art, imagination, music, and open-ended play.',                  '🎭', '#ec4899', 6),
+    ('Pre-writing',                     'Pencil grip, line tracing, shapes, and letter formation.',       '✍️', '#06b6d4', 7),
+    ('Sensory Exploration',             'Touch, texture, sound, smell, and visual discovery.',            '🖐️', '#84cc16', 8),
+    ('Social & Emotional Learning',     'Sharing, empathy, turn-taking, and self-regulation.',            '🤝', '#ef4444', 9)
 ON CONFLICT DO NOTHING;
 
 -- ---- Sample Products ----
@@ -97,21 +97,21 @@ INSERT INTO activities (product_id, name, description, instructions, age_min_mon
     ),
     (
         (SELECT id FROM products WHERE slug = 'first-strokes-activity-book'),
-        'Curved Lines � Follow the Rainbow',
+        'Curved Lines � Follow the Rainbow',
         'Trace the rainbow arches from one cloud to another.',
         'Curved lines require more control. Demonstrate the smooth arching movement. Let your child try slowly, then faster as confidence grows.',
         36, 60, 2, 3, 7
     ),
     (
         (SELECT id FROM products WHERE slug = 'first-strokes-activity-book'),
-        'Zigzag Lines � Lightning Bolts',
+        'Zigzag Lines � Lightning Bolts',
         'Trace the zigzag lightning bolts across the sky.',
         'Change direction tracing is a new challenge. Go slowly and praise each direction change. This builds the hand-eye coordination needed for letters.',
         42, 60, 2, 4, 7
     ),
     (
         (SELECT id FROM products WHERE slug = 'first-strokes-activity-book'),
-        'Circle Tracing � Bubble Shapes',
+        'Circle Tracing � Bubble Shapes',
         'Trace the big and small bubbles.',
         'Circles prepare children for letters like O, C, D, G. Start big and go smaller. Encourage smooth, continuous movement without lifting the pencil.',
         42, 60, 3, 5, 8
@@ -168,7 +168,7 @@ INSERT INTO activities (product_id, name, description, instructions, age_min_mon
     ),
     (
         (SELECT id FROM products WHERE slug = 'number-bees-numeracy-book'),
-        'Counting to 10 � Flower Petals',
+        'Counting to 10 � Flower Petals',
         'Count how many petals each flower has and write the number.',
         'Point to each petal and count together. This combines counting with number recognition and early writing.',
         42, 60, 2, 4, 10
