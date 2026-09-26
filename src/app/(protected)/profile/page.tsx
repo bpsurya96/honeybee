@@ -1,7 +1,6 @@
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import ProfileClient from './ProfileClient'
-import AILearningSummary from './AILearningSummary'
 
 export const metadata: Metadata = {
   title: 'My Profile',
@@ -25,7 +24,6 @@ export default async function ProfilePage() {
         email={user!.email || ''}
         createdAt={user!.created_at || ''}
       />
-      <AILearningSummary parentId={user!.id} />
     </div>
   )
 }

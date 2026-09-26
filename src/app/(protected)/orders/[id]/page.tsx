@@ -5,7 +5,6 @@ import { createClient } from '@/lib/supabase/server'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import { ChevronLeft } from 'lucide-react'
-import ChildAssignmentClient from './ChildAssignmentClient'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -24,10 +23,12 @@ export default async function OrderDetailPage({ params }: PageProps) {
     .from('orders')
     .select(`
       *,
+      children (
+        name
+      ),
       items:order_items(
         *,
-        product:products(*),
-        assignment:child_products(child_id)
+        product:products(*)
       )
     `)
     .eq('id', id)
@@ -35,13 +36,6 @@ export default async function OrderDetailPage({ params }: PageProps) {
     .single()
 
   if (!order) notFound()
-
-  // Fetch children for assignment dropdowns
-  const { data: children } = await supabase
-    .from('children')
-    .select('id, name, avatar_url')
-    .eq('parent_id', user!.id)
-    .order('created_at', { ascending: true })
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -79,18 +73,27 @@ export default async function OrderDetailPage({ params }: PageProps) {
         </div>
 
         <div className="p-6 md:p-8 bg-stone-50/50">
-          <h2 className="font-display font-bold text-lg text-stone-900 mb-4">Assign Learning Kits</h2>
+          <h2 className="font-display font-bold text-lg text-stone-900 mb-4">Learning Kits</h2>
           <p className="text-stone-600 text-sm mb-6">
-            Assign purchased kits to your children so they appear in their personal library and unlock digital activities.
+            These kits have been automatically added to <span className="font-bold">{order.children?.name || 'your child'}</span>'s library.
           </p>
           
           <div className="space-y-4">
             {order.items.map((item: any) => (
-              <ChildAssignmentClient 
-                key={item.id} 
-                item={item} 
-                childrenList={children || []} 
-              />
+              <div key={item.id} className="flex gap-4 p-4 bg-white rounded-2xl border border-stone-100 shadow-sm">
+                <div className="w-20 h-20 bg-stone-100 rounded-xl flex items-center justify-center overflow-hidden shrink-0">
+                  {item.product?.image_url ? (
+                    <img src={item.product.image_url} alt={item.product.name} className="w-full h-full object-cover" />
+                  ) : (
+                    <span className="text-3xl">📚</span>
+                  )}
+                </div>
+                <div>
+                  <h3 className="font-bold text-stone-900">{item.product?.name}</h3>
+                  <p className="text-stone-500 text-sm mb-2">{item.product?.description}</p>
+                  <p className="font-semibold text-amber-600">Qty: {item.quantity}</p>
+                </div>
+              </div>
             ))}
           </div>
         </div>
@@ -98,15 +101,15 @@ export default async function OrderDetailPage({ params }: PageProps) {
         <div className="p-6 md:p-8 border-t border-stone-100">
           <div className="flex justify-between items-center text-lg mb-2">
             <span className="text-stone-600">Subtotal</span>
-            <span className="font-semibold text-stone-900">�{order.subtotal.toFixed(2)}</span>
+            <span className="font-semibold text-stone-900">₹{order.subtotal.toFixed(2)}</span>
           </div>
           <div className="flex justify-between items-center text-lg mb-4">
             <span className="text-stone-600">Shipping</span>
-            <span className="font-semibold text-stone-900">�0.00</span>
+            <span className="font-semibold text-stone-900">₹0.00</span>
           </div>
           <div className="flex justify-between items-center text-2xl border-t border-stone-200 pt-4">
             <span className="font-display font-bold text-stone-900">Total</span>
-            <span className="font-display font-black text-amber-600">�{order.total.toFixed(2)}</span>
+            <span className="font-display font-black text-amber-600">₹{order.total.toFixed(2)}</span>
           </div>
         </div>
       </div>

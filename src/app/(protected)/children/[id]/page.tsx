@@ -6,6 +6,7 @@ import { notFound, redirect } from 'next/navigation'
 import Link from 'next/link'
 import { formatAge, calculateAgeMonths } from '@/lib/utils'
 import ChildDetailClient from './ChildDetailClient'
+import AILearningSummary from './AILearningSummary'
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -161,6 +162,8 @@ export default async function ChildDetailPage({ params }: PageProps) {
         ← All Children
       </Link>
 
+      <AILearningSummary childId={id} />
+
       <ChildDetailClient
         child={child}
         ageDisplay={ageDisplay}
@@ -172,4 +175,3 @@ export default async function ChildDetailPage({ params }: PageProps) {
     </div>
   )
 }
-

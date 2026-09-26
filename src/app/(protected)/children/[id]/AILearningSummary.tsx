@@ -2,8 +2,7 @@ import React from 'react';
 import { createClient } from '@/lib/supabase/server';
 import ProductCard from '@/components/products/ProductCard';
 
-// Dummy AI Assessment for demo purposes, since there's no actual AI assessment data available in DB schema natively.
-// We will base it on age and generic categories.
+// Dummy AI Assessment for demo purposes
 function generateAiSummary(childName: string, ageMonths: number) {
   let strengths = [];
   let areasToDevelop = [];
@@ -26,32 +25,23 @@ function generateAiSummary(childName: string, ageMonths: number) {
   return { strengths, areasToDevelop, recommendedSkills };
 }
 
-export default async function AILearningSummary({ parentId }: { parentId: string }) {
+export default async function AILearningSummary({ childId }: { childId: string }) {
   const supabase = await createClient();
 
-  const { data: children } = await supabase
+  const { data: child } = await supabase
     .from('children')
     .select('*, child_activities(*)')
-    .eq('parent_id', parentId)
-    .order('created_at', { ascending: true })
-    .limit(1);
+    .eq('id', childId)
+    .single();
+
+  if (!child) return null;
 
   const { data: profile } = await supabase
     .from('profiles')
     .select('full_name, avatar_url, ai_credits')
-    .eq('id', parentId)
+    .eq('id', child.parent_id)
     .single();
 
-  if (!children || children.length === 0) {
-    return (
-      <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-100 mb-4">
-        <h2 className="text-xl font-bold mb-2">AI Learning Summary</h2>
-        <p className="text-stone-500">We're still learning about your child. Please add a child profile and complete a few activities to unlock personalized insights.</p>
-      </div>
-    );
-  }
-
-  const child = children[0];
   const dob = new Date(child.date_of_birth);
   const now = new Date();
   const ageMonths = (now.getFullYear() - dob.getFullYear()) * 12 + now.getMonth() - dob.getMonth();
@@ -62,7 +52,7 @@ export default async function AILearningSummary({ parentId }: { parentId: string
   let progress = 0;
   if (profile?.full_name) progress += 10;
   if (profile?.avatar_url) progress += 10;
-  if (child) progress += 20;
+  progress += 20; // for having the child profile
   
   const activitiesCount = child.child_activities?.length || 0;
   progress += Math.min(activitiesCount * 10, 40);
@@ -72,7 +62,6 @@ export default async function AILearningSummary({ parentId }: { parentId: string
   const finalProgress = Math.min(progress, 100);
 
   // Fetch recommended books
-  // For demo, we just fetch 2 active products
   const { data: products } = await supabase
     .from('products')
     .select(`
@@ -90,7 +79,7 @@ export default async function AILearningSummary({ parentId }: { parentId: string
   }));
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 mt-8">
       {/* Progress Bar */}
       <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-100 mb-4">
         <h2 className="text-xl font-bold mb-4">{child.name}'s Learning Profile</h2>

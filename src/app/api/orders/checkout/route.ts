@@ -96,12 +96,28 @@ export async function POST(request: Request) {
       unit_price: item.unit_price
     }));
 
-    const { error: itemsError } = await supabase
+    const { data: insertedOrderItems, error: itemsError } = await supabase
       .from('order_items')
-      .insert(orderItemsData);
+      .insert(orderItemsData)
+      .select();
 
-    if (itemsError) {
+    if (itemsError || !insertedOrderItems) {
       console.error('Order items creation failed:', itemsError);
+    } else {
+      // Auto-assign products to the selected child
+      const childProductsData = insertedOrderItems.map(item => ({
+        child_id: child_id,
+        order_item_id: item.id,
+        active: true
+      }));
+
+      const { error: cpError } = await supabase
+        .from('child_products')
+        .insert(childProductsData);
+        
+      if (cpError) {
+        console.error('Failed to auto-assign to child:', cpError);
+      }
     }
 
     // Add AI Credit if applicable
