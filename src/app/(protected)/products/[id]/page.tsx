@@ -65,6 +65,31 @@ export default async function ProductDetailPage({ params }: PageProps) {
     skills: a.activity_skills.map((as: any) => as.skills).filter(Boolean) as Skill[]
   }))
 
+  // Calculate skill levels for this product
+  const skillCounts: Record<string, { count: number, name: string }> = {}
+  let maxSkillCount = 0
+  activities.forEach(act => {
+    act.skills.forEach((skill: any) => {
+      if (!skillCounts[skill.id]) {
+        skillCounts[skill.id] = { count: 0, name: skill.name }
+      }
+      skillCounts[skill.id].count++
+      if (skillCounts[skill.id].count > maxSkillCount) {
+        maxSkillCount = skillCounts[skill.id].count
+      }
+    })
+  })
+  
+  // If no activities have skills mapped, fallback to the product's top-level skills
+  if (Object.keys(skillCounts).length === 0) {
+    product.skills.forEach((skill: any) => {
+      skillCounts[skill.id] = { count: 1, name: skill.name }
+      maxSkillCount = 1
+    })
+  }
+  
+  const skillLevels = Object.values(skillCounts).sort((a, b) => b.count - a.count)
+
   // Get multiple images if available
   let productImages = [product.image_url || 'https://placehold.co/800x800/f8fafc/94a3b8?text=Product'];
   if (product.image_url) {
@@ -108,11 +133,17 @@ export default async function ProductDetailPage({ params }: PageProps) {
             {product.description}
           </p>
 
-          <div className="mb-8">
-            <h3 className="font-semibold text-stone-900 mb-3">Skills Developed</h3>
-            <div className="flex flex-wrap gap-2">
-              {product.skills.map((skill: Skill) => (
-                <SkillBadge key={skill.id} name={skill.name}  />
+          <div className="mb-8 bg-white p-5 rounded-3xl border border-stone-100 shadow-sm">
+            <h3 className="font-display font-bold text-lg text-stone-900 mb-4">Skill Focus Areas</h3>
+            <div className="flex flex-col gap-3">
+              {skillLevels.map((sl, idx) => (
+                <div key={idx} className="flex items-center gap-3">
+                  <div className="w-1/3 text-sm font-semibold text-stone-700 truncate" title={sl.name}>{sl.name}</div>
+                  <div className="flex-1 h-2.5 bg-stone-100 rounded-full overflow-hidden">
+                    <div className="h-full bg-amber-500 rounded-full" style={{ width: `${(sl.count / Math.max(maxSkillCount, 1)) * 100}%` }} />
+                  </div>
+                  <div className="text-xs font-bold text-stone-400 w-6 text-right">{sl.count}</div>
+                </div>
               ))}
             </div>
           </div>
