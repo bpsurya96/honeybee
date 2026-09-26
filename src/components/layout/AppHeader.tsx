@@ -4,11 +4,10 @@
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
-import { ChevronDown } from 'lucide-react'
+import { ChevronDown, ShoppingCart } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
-import { calculateAgeMonths, formatAge } from '@/lib/utils'
 import type { User } from '@supabase/supabase-js'
-import type { Child } from '@/types'
+import { useCart } from '@/context/CartContext'
 
 interface AppHeaderProps {
   user: User
@@ -25,19 +24,25 @@ const navLinks = [
 
 export default function AppHeader({ user }: AppHeaderProps) {
   const pathname = usePathname()
-  const [children, setChildren] = useState<Child[]>([])
+  const [parentName, setParentName] = useState<string>('Parent')
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
+  
+  const { totalItems } = useCart();
 
   useEffect(() => {
     const supabase = createClient()
     supabase
-      .from('children')
-      .select('id, name, date_of_birth, avatar_url, parent_id, gender, created_at, updated_at')
-      .eq('parent_id', user.id)
-      .order('created_at', { ascending: true })
-      .then(({ data }) => { if (data) setChildren(data) })
-   }, [user.id, pathname])
+      .from('profiles')
+      .select('full_name')
+      .eq('id', user.id)
+      .single()
+      .then(({ data }) => {
+        if (data && data.full_name) {
+          setParentName(data.full_name)
+        }
+      })
+  }, [user.id])
 
   // Close dropdown on outside click
   useEffect(() => {
@@ -78,67 +83,64 @@ export default function AppHeader({ user }: AppHeaderProps) {
           ))}
         </nav>
 
-        {/* Child Selector (shows when children exist) */}
-        {children.length > 0 && (
+        {/* Right Actions */}
+        <div className="flex items-center gap-4">
+          <Link href="/cart" className="relative p-2 text-stone-600 hover:text-amber-600 transition-colors">
+            <ShoppingCart size={24} />
+            {totalItems > 0 && (
+              <span className="absolute top-0 right-0 w-5 h-5 bg-amber-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold">
+                {totalItems}
+              </span>
+            )}
+          </Link>
+
+          {/* Parent Profile */}
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
               className="flex items-center gap-2 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-full px-3 py-1.5 transition-colors text-sm"
             >
               <div className="w-6 h-6 bg-amber-400 rounded-full flex items-center justify-center text-xs font-bold text-white overflow-hidden">
-                {children[0].avatar_url ? (
-                  <img src={children[0].avatar_url} alt={children[0].name} className="w-full h-full object-cover" />
-                ) : (
-                  children[0].name[0].toUpperCase()
-                )}
+                {parentName[0].toUpperCase()}
               </div>
-              <span className="font-semibold text-amber-800 max-w-20 truncate hidden sm:block">
-                {children[0].name}
-              </span>
+              <div className="flex flex-col text-left hidden sm:block">
+                <span className="font-semibold text-amber-800 max-w-28 truncate leading-tight">
+                  {parentName}
+                </span>
+                <span className="text-[10px] text-amber-600 font-medium leading-none">
+                  Parent Account
+                </span>
+              </div>
               <ChevronDown size={14} className={`text-amber-600 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {dropdownOpen && (
               <div className="absolute right-0 top-full mt-2 bg-white rounded-2xl shadow-xl border border-stone-100 p-2 min-w-48 z-50">
-                <p className="text-xs font-semibold text-stone-400 uppercase tracking-wide px-2 py-1 mb-1">
-                  Switch child
-                </p>
-                {children.map((child) => {
-                  const age = formatAge(calculateAgeMonths(child.date_of_birth))
-                  return (
-                    <Link
-                      key={child.id}
-                      href={`/children/${child.id}`}
-                      onClick={() => setDropdownOpen(false)}
-                      className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-amber-50 transition-colors w-full text-left"
-                    >
-                      <div className="w-8 h-8 bg-amber-100 rounded-xl flex items-center justify-center text-sm font-bold text-amber-600 overflow-hidden shrink-0">
-                        {child.avatar_url ? (
-                          <img src={child.avatar_url} alt={child.name} className="w-full h-full object-cover" />
-                        ) : (
-                          child.name[0].toUpperCase()
-                        )}
-                      </div>
-                      <div className="min-w-0">
-                        <p className="font-semibold text-stone-900 text-sm truncate">{child.name}</p>
-                        <p className="text-stone-400 text-xs">{age}</p>
-                      </div>
-                    </Link>
-                  )
-                })}
+                <div className="px-3 py-2 border-b border-stone-100 mb-2">
+                  <p className="font-semibold text-stone-900 text-sm truncate">{parentName}</p>
+                  <p className="text-stone-400 text-xs">Parent Account</p>
+                </div>
+                <Link
+                  href="/profile"
+                  onClick={() => setDropdownOpen(false)}
+                  className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-amber-50 transition-colors w-full text-left"
+                >
+                  <span className="text-sm font-medium text-stone-700">My Profile</span>
+                </Link>
                 <div className="border-t border-stone-100 mt-2 pt-2">
-                  <Link
-                    href="/children/new"
-                    onClick={() => setDropdownOpen(false)}
-                    className="flex items-center gap-2 px-3 py-2 rounded-xl hover:bg-stone-50 transition-colors text-sm text-stone-500 hover:text-stone-700"
-                  >
-                    <span>+</span> Add child
-                  </Link>
+                  <form action="/api/auth/signout" method="POST">
+                    <button
+                      type="submit"
+                      className="flex w-full items-center gap-2 px-3 py-2 rounded-xl hover:bg-red-50 transition-colors text-sm text-red-500 font-medium"
+                    >
+                      Sign Out
+                    </button>
+                  </form>
                 </div>
               </div>
             )}
           </div>
-        )}
+        </div>
       </div>
     </header>
   )

@@ -1,10 +1,11 @@
 import type { Metadata, Viewport } from 'next'
 import './globals.css'
+import { CartProvider } from '@/context/CartContext'
 
 export const metadata: Metadata = {
   title: {
     template: '%s | HoneyBee Learning',
-    default: 'HoneyBee Learning Ã‚â€” Early Learning for Little Minds',
+    default: 'HoneyBee Learning — Early Learning for Little Minds',
   },
   description:
     'A parent-focused personalised learning journey platform for young children aged newborn to 5 years.',
@@ -37,7 +38,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className="h-full">
-      <body className="min-h-full">{children}</body>
+      <body className="min-h-full">
+        <CartProvider>
+          {children}
+        </CartProvider>
+      </body>
     </html>
   )
 }

@@ -1,5 +1,5 @@
 // ============================================================
-// HoneyBee Learning Ã‚â€” Core TypeScript Types
+// HoneyBee Learning — Core TypeScript Types
 // ============================================================
 
 // ----- Database Row Types -----
@@ -8,6 +8,7 @@ export interface Profile {
   id: string
   full_name: string | null
   avatar_url: string | null
+  ai_credits: number
   created_at: string
   updated_at: string
 }
@@ -93,8 +94,15 @@ export interface Activity {
 export interface Order {
   id: string
   parent_id: string
-  status: 'pending' | 'paid' | 'failed' | 'refunded'
+  child_id?: string | null
+  status: 'new' | 'pending_confirmation' | 'pending' | 'paid' | 'failed' | 'refunded'
   delivery_status: 'pending' | 'processing' | 'shipped' | 'delivered'
+  payment_status: 'pending' | 'paid' | 'failed' | 'refunded'
+  mobile_number?: string | null
+  delivery_address?: string | null
+  delivery_city?: string | null
+  delivery_state?: string | null
+  delivery_pincode?: string | null
   subtotal: number
   total: number
   payment_ref: string | null
@@ -102,6 +110,7 @@ export interface Order {
   updated_at: string
   // joined
   items?: OrderItem[]
+  child?: Child
 }
 
 export interface OrderItem {
@@ -114,6 +123,16 @@ export interface OrderItem {
   // joined
   product?: Product
   child_assignment?: ChildProduct
+}
+
+export interface AiCreditTransaction {
+  id: string
+  parent_id: string
+  order_id?: string | null
+  amount: number
+  reason: string
+  status: 'pending' | 'completed' | 'failed'
+  created_at: string
 }
 
 export interface ChildProduct {
@@ -164,6 +183,12 @@ export interface ChildDashboardData {
   recent_completions: ChildActivity[]
   assigned_products: Product[]
   recommended_activities: Activity[]
+}
+
+// ----- Cart Types -----
+export interface CartItem {
+  product: Product
+  quantity: number
 }
 
 // ----- API Response Types -----

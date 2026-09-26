@@ -38,7 +38,7 @@ export default async function OrdersPage() {
           <div className="text-6xl mb-4">📦</div>
           <h2 className="text-2xl font-display font-bold text-stone-900 mb-2">No orders yet</h2>
           <p className="text-stone-500 mb-8 max-w-md mx-auto">
-            You haven&apos;t placed any orders. Browse our learning kits to start your child&apos;s journey!
+            You haven't placed any orders. Browse our learning kits to start your child's journey!
           </p>
           <Link href="/products" className="bg-amber-500 hover:bg-amber-600 text-white font-bold px-8 py-3 rounded-full transition-all shadow-md inline-block">
             Browse Kits
@@ -62,13 +62,19 @@ export default async function OrdersPage() {
                     Order #{order.id.slice(0, 8).toUpperCase()}
                   </h3>
                   <span className={`text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider ${
-                    order.status === 'paid' ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-100 text-stone-500'
+                    order.status === 'paid' ? 'bg-emerald-100 text-emerald-700' : 
+                    order.status === 'new' ? 'bg-blue-100 text-blue-700' : 'bg-stone-100 text-stone-500'
                   }`}>
                     {order.status}
                   </span>
+                  {order.payment_status === 'pending' && (
+                     <span className="text-xs font-bold px-2.5 py-1 rounded-full uppercase tracking-wider bg-amber-100 text-amber-700">
+                       Payment Pending
+                     </span>
+                  )}
                 </div>
                 <p className="text-stone-600 text-sm font-medium">
-                  {order.items[0].count} item{order.items[0].count !== 1 ? 's' : ''} � Total: �{order.total.toFixed(2)}
+                  {order.items[0].count} item{order.items[0].count !== 1 ? 's' : ''} • Total: ₹{order.total.toFixed(2)}
                 </p>
               </div>
               <div className="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto border-t md:border-0 border-stone-100 pt-4 md:pt-0 mt-2 md:mt-0">
@@ -76,7 +82,7 @@ export default async function OrdersPage() {
                   order.delivery_status === 'delivered' ? 'text-emerald-600' : 
                   order.delivery_status === 'shipped' ? 'text-amber-600' : 'text-stone-500'
                 }`}>
-                  Status: {order.delivery_status.charAt(0).toUpperCase() + order.delivery_status.slice(1)}
+                  Delivery: {order.delivery_status.charAt(0).toUpperCase() + order.delivery_status.slice(1)}
                 </span>
                 <div className="w-10 h-10 rounded-full bg-stone-50 flex items-center justify-center text-stone-400 group-hover:bg-amber-100 group-hover:text-amber-600 transition-colors">
                   <ChevronRight size={20} />
