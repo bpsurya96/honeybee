@@ -1,39 +1,45 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
-import type { SkillProgress } from '@/types'
-
-import ProductCard from '@/components/products/ProductCard'
-
+import React from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import AvatarUpload from '@/components/ui/AvatarUpload'
 import { ToastContainer } from '@/components/ui/Toast'
 import { useToast } from '@/hooks/useToast'
-import type { Child, SkillCategory } from '@/types'
+import type { Child, SkillCategory, Product } from '@/types'
+
+const CATEGORY_COLOURS: Record<string, string> = {
+  'Language & Literacy': 'from-[var(--color-fun-yellow)] to-amber-500',
+  'Cognitive': 'from-[var(--color-fun-purple)] to-purple-800',
+  'Motor Skills': 'from-[var(--color-fun-red)] to-[var(--color-fun-red-hover)]',
+  'Social & Emotional': 'from-pink-400 to-rose-500',
+  'Sensory': 'from-cyan-400 to-blue-500',
+}
 
 interface ChildDetailClientProps {
   child: Child
   ageDisplay: string
   skillCategories: SkillCategory[]
-  library: any[]
-  skillProgress: SkillProgress[]
+  skillProgress: {
+    category: SkillCategory
+    completed: number
+    total: number
+    percentage: number
+  }[]
+  library: Product[]
   completedProductIds: string[]
+  aiSummaryNode?: React.ReactNode
 }
 
-const CATEGORY_COLOURS: Record<string, string> = {
-  'Fine Motor Skills': 'from-amber-400 to-orange-400',
-  'Language & Communication': 'from-blue-400 to-indigo-400',
-  'Early Numeracy': 'from-emerald-400 to-teal-400',
-  'Cognitive Skills': 'from-violet-400 to-purple-400',
-  'Problem Solving': 'from-orange-400 to-red-400',
-  'Creativity': 'from-pink-400 to-rose-400',
-  'Pre-writing': 'from-cyan-400 to-sky-400',
-  'Sensory Exploration': 'from-lime-400 to-green-400',
-  'Social & Emotional Learning': 'from-red-400 to-pink-400',
-}
-
-export default function ChildDetailClient({ child, ageDisplay, skillCategories, library, skillProgress, completedProductIds = [] }: ChildDetailClientProps) {
+export default function ChildDetailClient({ 
+  child, 
+  ageDisplay, 
+  skillCategories, 
+  skillProgress, 
+  library,
+  completedProductIds,
+  aiSummaryNode
+}: ChildDetailClientProps) {
   const router = useRouter()
   const { toasts, removeToast, success, error: showError } = useToast()
 
@@ -49,8 +55,8 @@ export default function ChildDetailClient({ child, ageDisplay, skillCategories, 
 
   return (
     <>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-6 mt-2">
+      {/* 1. Header */}
+      <div className="flex items-center justify-between mb-8 mt-2 bg-white p-6 rounded-3xl shadow-sm border border-stone-100">
         <div className="flex items-center gap-4">
           <AvatarUpload
             currentUrl={child.avatar_url}
@@ -60,68 +66,22 @@ export default function ChildDetailClient({ child, ageDisplay, skillCategories, 
           />
           <div>
             <h1 className="text-3xl font-display font-black text-stone-900">{child.name}</h1>
-            <p className="text-stone-500">{ageDisplay}</p>
+            <p className="text-stone-500 font-medium">{ageDisplay}</p>
           </div>
         </div>
         <Link
           href={`/children/${child.id}/edit`}
-          className="text-stone-500 hover:text-stone-700 font-semibold text-sm px-4 py-2 rounded-full hover:bg-stone-100 transition-colors"
+          className="text-stone-500 bg-stone-100 hover:text-stone-900 hover:bg-stone-200 font-bold text-sm px-5 py-2 btn-pill transition-colors"
         >
-          Edit
+          Edit ✏️
         </Link>
       </div>
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-8">
-        {[
-          { label: 'Activities Done', value: '0', icon: '📦' },
-          { label: 'Products', value: '0', icon: '📦' },
-          { label: 'Streak', value: '0 days', icon: '🔥' },
-          { label: 'Progress', value: '0%', icon: '📈' },
-        ].map((stat) => (
-          <div key={stat.label} className="bg-white rounded-2xl p-4 shadow-sm border border-stone-100 text-center">
-            <div className="text-2xl mb-1">{stat.icon}</div>
-            <div className="font-display font-bold text-xl text-stone-900">{stat.value}</div>
-            <div className="text-stone-500 text-xs mt-0.5">{stat.label}</div>
-          </div>
-        ))}
-      </div>
-
-      {/* Learning Areas */}
-      <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-100 mb-4">
-        <h2 className="font-display font-bold text-lg text-stone-900 mb-4">Learning Areas</h2>
-        <div className="space-y-4">
-          {skillCategories.slice(0, 6).map((cat) => {
-            const gradient = CATEGORY_COLOURS[cat.name] || 'from-amber-400 to-orange-400'
-            const progress = skillProgress.find(p => p.category.id === cat.id)
-            const percentage = progress ? Math.round(progress.percentage) : 0
-            return (
-              <div key={cat.id}>
-                <div className="flex justify-between items-center mb-1.5">
-                  <span className="text-sm font-medium text-stone-700 flex items-center gap-2">
-                    <span>{cat.icon}</span>
-                    {cat.name}
-                  </span>
-                  <span className="text-sm font-bold text-stone-900">{percentage}%</span>
-                </div>
-                <div className="h-2.5 bg-stone-100 rounded-full overflow-hidden">
-                  <div className={`h-full bg-gradient-to-r ${gradient} rounded-full`} style={{ width: `${percentage}%`, transition: 'width 1s ease-out' }} />
-                </div>
-              </div>
-            )
-          })}
-        </div>
-        <p className="text-stone-400 text-xs mt-4 text-center">
-          Progress updates as activities are completed.
-        </p>
-      </div>
-
-      
-      {/* My Library */}
-      <div className="mb-8">
+      {/* 2. My Library */}
+      <div className="mb-10">
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-2xl font-display font-black text-stone-900">
-            My Library
+          <h2 className="text-2xl font-display font-black text-[var(--color-fun-purple)]">
+            📚 My Library
           </h2>
         </div>
         
@@ -132,14 +92,14 @@ export default function ChildDetailClient({ child, ageDisplay, skillCategories, 
               return (
                 <div 
                   key={product.id} 
-                  className="group flex items-center justify-between bg-white rounded-2xl p-4 shadow-sm border border-stone-100 hover:border-amber-300 transition-all gap-4"
+                  className="group flex items-center justify-between bg-white rounded-3xl p-4 shadow-sm border border-stone-100 card-bouncy gap-4"
                 >
                   <Link href={`/products/${product.id}`} className="flex items-center gap-4 flex-1">
-                    <div className="w-16 h-16 bg-stone-50 rounded-xl overflow-hidden flex-shrink-0 border border-stone-100">
+                    <div className="w-16 h-16 bg-stone-50 rounded-2xl overflow-hidden flex-shrink-0 border border-stone-100">
                       <img 
                         src={product.image_url || 'https://placehold.co/400x400/f8fafc/94a3b8?text=Product'} 
                         alt={product.name} 
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                        className="w-full h-full object-cover"
                       />
                     </div>
                     <div>
@@ -147,12 +107,12 @@ export default function ChildDetailClient({ child, ageDisplay, skillCategories, 
                         {product.name}
                       </h3>
                       {isCompleted && (
-                        <p className="text-emerald-600 text-xs font-semibold mt-1">100% Completed</p>
+                        <p className="text-emerald-600 text-xs font-semibold mt-1">✨ 100% Completed</p>
                       )}
                     </div>
                   </Link>
 
-                  <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                  <div className="flex-shrink-0 transition-opacity duration-300">
                     {!isCompleted ? (
                       <button 
                         onClick={async () => {
@@ -171,12 +131,12 @@ export default function ChildDetailClient({ child, ageDisplay, skillCategories, 
                             }
                           }
                         }}
-                        className="bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-5 rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 text-sm whitespace-nowrap"
+                        className="bg-[var(--color-fun-yellow)] hover:bg-amber-400 text-stone-900 font-bold py-2.5 px-5 btn-pill transition-all shadow-sm flex items-center justify-center gap-2 text-sm whitespace-nowrap"
                       >
                         ✓ Mark as completed
                       </button>
                     ) : (
-                      <div className="bg-emerald-50 text-emerald-700 font-bold py-2 px-5 rounded-xl text-center text-sm border border-emerald-100 flex items-center justify-center gap-2 whitespace-nowrap">
+                      <div className="bg-emerald-50 text-emerald-700 font-bold py-2.5 px-5 btn-pill text-center text-sm border border-emerald-100 flex items-center justify-center gap-2 whitespace-nowrap">
                         ✓ Completed
                       </div>
                     )}
@@ -186,21 +146,71 @@ export default function ChildDetailClient({ child, ageDisplay, skillCategories, 
             })}
           </div>
         ) : (
-          <div className="bg-gradient-to-br from-amber-500 to-orange-500 rounded-3xl p-8 text-white text-center shadow-md">
-            <div className="text-5xl mb-4">🎨</div>
+          <div className="bg-gradient-to-br from-[var(--color-fun-yellow)] to-amber-500 rounded-3xl p-8 text-stone-900 text-center shadow-md">
+            <div className="text-5xl mb-4 animate-bounce">🎨</div>
             <h2 className="font-display font-bold text-2xl mb-3">Ready to start learning?</h2>
-            <p className="text-amber-50 mb-6 text-lg max-w-lg mx-auto leading-relaxed">
+            <p className="text-stone-800 mb-6 text-lg max-w-lg mx-auto leading-relaxed">
               Browse products and assign learning kits to {child.name} to begin tracking progress and unlock their digital activities.
             </p>
-            <Link href="/products" className="bg-white text-amber-600 font-bold px-8 py-3.5 rounded-full text-base hover:bg-amber-50 transition-colors inline-block shadow-sm">
-              Browse Kits
+            <Link href="/products" className="bg-white text-[var(--color-fun-red)] font-bold px-8 py-3.5 btn-pill text-base transition-colors inline-block shadow-sm card-bouncy">
+              Browse Kits 🚀
             </Link>
           </div>
         )}
+      </div>
+
+      {/* 3. Stats */}
+      <h2 className="text-2xl font-display font-black text-stone-900 mb-4">
+        📊 Stats
+      </h2>
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
+        {[
+          { label: 'Activities Done', value: '0', icon: '📝' },
+          { label: 'Products', value: library.length.toString(), icon: '📦' },
+          { label: 'Streak', value: '0 days', icon: '🔥' },
+          { label: 'Progress', value: '0%', icon: '📈' },
+        ].map((stat) => (
+          <div key={stat.label} className="bg-white rounded-3xl p-4 shadow-sm border border-stone-100 text-center card-bouncy">
+            <div className="text-2xl mb-1">{stat.icon}</div>
+            <div className="font-display font-bold text-xl text-[var(--color-fun-red)]">{stat.value}</div>
+            <div className="text-stone-500 font-semibold text-xs mt-0.5">{stat.label}</div>
+          </div>
+        ))}
+      </div>
+
+      {/* 4. AI Learning Profile */}
+      {aiSummaryNode}
+
+      {/* 5. Learning Areas */}
+      <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-100 mb-8 mt-8">
+        <h2 className="font-display font-bold text-xl text-stone-900 mb-6">🎯 Learning Areas Breakdown</h2>
+        <div className="space-y-5">
+          {skillCategories.slice(0, 6).map((cat) => {
+            const gradient = CATEGORY_COLOURS[cat.name] || 'from-stone-400 to-stone-500'
+            const progress = skillProgress.find(p => p.category.id === cat.id)
+            const percentage = progress ? Math.round(progress.percentage) : 0
+            return (
+              <div key={cat.id}>
+                <div className="flex justify-between items-center mb-2">
+                  <span className="text-sm font-bold text-stone-700 flex items-center gap-2">
+                    <span>{cat.icon}</span>
+                    {cat.name}
+                  </span>
+                  <span className="text-sm font-black text-[var(--color-fun-purple)]">{percentage}%</span>
+                </div>
+                <div className="h-3 bg-stone-100 rounded-full overflow-hidden shadow-inner">
+                  <div className={`h-full bg-gradient-to-r ${gradient} rounded-full`} style={{ width: `${percentage}%`, transition: 'width 1s ease-out' }} />
+                </div>
+              </div>
+            )
+          })}
+        </div>
+        <p className="text-stone-400 font-medium text-xs mt-6 text-center">
+          *Progress updates as activities are completed.
+        </p>
       </div>
 
       <ToastContainer toasts={toasts} onDismiss={removeToast} />
     </>
   )
 }
-

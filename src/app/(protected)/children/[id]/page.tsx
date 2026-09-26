@@ -158,11 +158,9 @@ export default async function ChildDetailPage({ params }: PageProps) {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
-      <Link href="/children" className="text-stone-500 hover:text-stone-700 text-sm font-medium mb-4 inline-flex items-center gap-1">
+      <Link href="/children" className="text-stone-500 hover:text-[var(--color-fun-purple)] text-sm font-medium mb-4 inline-flex items-center gap-1">
         ← All Children
       </Link>
-
-      <AILearningSummary childId={id} />
 
       <ChildDetailClient
         child={child}
@@ -171,6 +169,7 @@ export default async function ChildDetailPage({ params }: PageProps) {
         skillProgress={skillProgress}
         library={library}
         completedProductIds={Array.from(completedProductIds)}
+        aiSummaryNode={<AILearningSummary childId={id} />}
       />
     </div>
   )

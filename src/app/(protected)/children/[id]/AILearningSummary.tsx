@@ -81,55 +81,59 @@ export default async function AILearningSummary({ childId }: { childId: string }
   return (
     <div className="space-y-6 mt-8">
       {/* Progress Bar */}
-      <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-100 mb-4">
-        <h2 className="text-xl font-bold mb-4">{child.name}'s Learning Profile</h2>
-        <div className="w-full bg-stone-100 rounded-full h-4 mb-2 overflow-hidden">
-          <div className="bg-amber-500 h-4 rounded-full transition-all duration-1000" style={{ width: `${finalProgress}%` }}></div>
+      <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-100 mb-4 card-bouncy">
+        <h2 className="text-xl font-display font-black text-stone-900 mb-4">{child.name}'s Learning Profile</h2>
+        <div className="w-full bg-stone-100 rounded-full h-5 mb-3 overflow-hidden shadow-inner">
+          <div className="bg-gradient-to-r from-[var(--color-fun-yellow)] to-[var(--color-fun-red)] h-5 rounded-full transition-all duration-1000 flex items-center justify-end px-2" style={{ width: `${finalProgress}%` }}>
+            <span className="text-[10px] font-black text-white">{finalProgress}%</span>
+          </div>
         </div>
         <div className="flex justify-between items-center text-sm font-semibold">
-          <span className="text-stone-500">Profile Progress: {finalProgress}%</span>
+          <span className="text-stone-500">Profile Completeness</span>
           {profile && profile.ai_credits > 0 && (
-            <span className="text-amber-600">✨ AI Credits: ₹{profile.ai_credits.toFixed(2)}</span>
+            <span className="text-[var(--color-fun-purple)] font-black bg-purple-50 px-3 py-1 btn-pill border border-purple-100">
+              ✨ AI Credits: ₹{profile.ai_credits.toFixed(2)}
+            </span>
           )}
         </div>
-        <p className="text-xs text-stone-400 mt-2">
+        <p className="text-xs text-stone-400 mt-2 font-medium">
           *Progress based on completed profile info, child information, reading/activity data, and AI insights.
         </p>
       </div>
 
       {/* AI Summary */}
-      <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-3xl p-6 shadow-sm border border-amber-100 mb-4">
-        <div className="flex items-center gap-2 mb-4">
-          <span className="text-2xl">✨</span>
-          <h2 className="text-xl font-bold text-stone-900">AI Learning Summary</h2>
+      <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-3xl p-8 shadow-sm border border-indigo-100 mb-4">
+        <div className="flex items-center gap-3 mb-2">
+          <span className="text-3xl animate-pulse">🤖</span>
+          <h2 className="text-2xl font-display font-black text-[var(--color-fun-purple)]">AI Learning Summary</h2>
         </div>
-        <p className="text-stone-600 mb-6 text-sm">
+        <p className="text-stone-600 mb-8 font-medium">
           Based on {child.name}'s age ({Math.floor(ageMonths/12)}y {ageMonths%12}m) and recent learning activity.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-          <div className="bg-white/60 rounded-2xl p-4 border border-white">
-            <h3 className="font-bold text-emerald-700 mb-3 flex items-center gap-2">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-10">
+          <div className="bg-white/80 backdrop-blur rounded-3xl p-6 border border-white shadow-sm card-bouncy">
+            <h3 className="font-display font-black text-xl text-emerald-600 mb-4 flex items-center gap-2">
               <span>🌟</span> Strengths
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-3">
               {aiSummary.strengths.map((strength, i) => (
-                <li key={i} className="flex items-center gap-2 text-stone-700 text-sm font-medium">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+                <li key={i} className="flex items-center gap-3 text-stone-700 font-bold">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400"></span>
                   {strength}
                 </li>
               ))}
             </ul>
           </div>
           
-          <div className="bg-white/60 rounded-2xl p-4 border border-white">
-            <h3 className="font-bold text-amber-700 mb-3 flex items-center gap-2">
+          <div className="bg-white/80 backdrop-blur rounded-3xl p-6 border border-white shadow-sm card-bouncy">
+            <h3 className="font-display font-black text-xl text-[var(--color-fun-red)] mb-4 flex items-center gap-2">
               <span>🌱</span> Areas to Develop
             </h3>
-            <ul className="space-y-2">
+            <ul className="space-y-3">
               {aiSummary.areasToDevelop.map((area, i) => (
-                <li key={i} className="flex items-center gap-2 text-stone-700 text-sm font-medium">
-                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400"></span>
+                <li key={i} className="flex items-center gap-3 text-stone-700 font-bold">
+                  <span className="w-2 h-2 rounded-full bg-[var(--color-fun-red)]"></span>
                   {area}
                 </li>
               ))}
@@ -137,18 +141,20 @@ export default async function AILearningSummary({ childId }: { childId: string }
           </div>
         </div>
 
-        <h3 className="font-bold text-stone-900 mb-4 flex items-center gap-2">
+        <h3 className="font-display font-black text-2xl text-stone-900 mb-6 flex items-center gap-2">
           <span>📚</span> Recommended for {child.name}
         </h3>
         
         {recommendedProducts.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {recommendedProducts.map((product: any) => (
               <ProductCard key={product.id} product={product} />
             ))}
           </div>
         ) : (
-          <p className="text-stone-500 text-sm italic">We are curating the best books for {child.name}. Check back soon!</p>
+          <p className="text-stone-500 font-medium italic bg-white p-4 rounded-2xl border border-stone-100">
+            We are curating the best books for {child.name}. Check back soon!
+          </p>
         )}
       </div>
     </div>
