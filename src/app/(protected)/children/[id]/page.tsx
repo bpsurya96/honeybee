@@ -79,7 +79,9 @@ export default async function ChildDetailPage({ params }: PageProps) {
     .select(`
       order_items (
         products (
+          id,
           activities (
+            id,
             activity_skills (
               skills (category_id)
             )
@@ -140,6 +142,19 @@ export default async function ChildDetailPage({ params }: PageProps) {
   const ageMonths = calculateAgeMonths(child.date_of_birth)
   const ageDisplay = formatAge(ageMonths)
 
+  // Find which products are fully completed
+  const completedSet = new Set(completions?.map((c: any) => c.activity_id))
+  const completedProductIds = new Set<string>()
+  availableData?.forEach((cp: any) => {
+    const product = cp.order_items?.products
+    if (product) {
+      const acts = product.activities || []
+      if (acts.length > 0 && acts.every((a: any) => completedSet.has(a.id))) {
+         completedProductIds.add(product.id)
+      }
+    }
+  })
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
       <Link href="/children" className="text-stone-500 hover:text-stone-700 text-sm font-medium mb-4 inline-flex items-center gap-1">
@@ -152,7 +167,9 @@ export default async function ChildDetailPage({ params }: PageProps) {
         skillCategories={skillCategories || []}
         skillProgress={skillProgress}
         library={library}
+        completedProductIds={Array.from(completedProductIds)}
       />
     </div>
   )
 }
+

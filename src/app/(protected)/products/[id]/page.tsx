@@ -10,6 +10,9 @@ import AgeRangeBadge from '@/components/products/AgeRangeBadge'
 import SkillBadge from '@/components/products/SkillBadge'
 import ActivityCard from '@/components/activities/ActivityCard'
 import AddToLibraryButton from '@/components/products/AddToLibraryButton'
+import ImageGallery from '@/components/products/ImageGallery'
+import fs from 'fs'
+import path from 'path'
 import type { Skill, Activity } from '@/types'
 
 interface PageProps {
@@ -62,6 +65,24 @@ export default async function ProductDetailPage({ params }: PageProps) {
     skills: a.activity_skills.map((as: any) => as.skills).filter(Boolean) as Skill[]
   }))
 
+  // Get multiple images if available
+  let productImages = [product.image_url || 'https://placehold.co/800x800/f8fafc/94a3b8?text=Product'];
+  if (product.image_url) {
+    try {
+      const folderPath = product.image_url.substring(0, product.image_url.lastIndexOf('/'));
+      const fullPath = path.join(process.cwd(), 'public', folderPath);
+      if (fs.existsSync(fullPath)) {
+        const files = fs.readdirSync(fullPath);
+        const images = files.filter(f => f.endsWith('.png') || f.endsWith('.jpg') || f.endsWith('.webp')).sort();
+        if (images.length > 0) {
+          productImages = images.map(f => `${folderPath}/${f}`);
+        }
+      }
+    } catch (e) {
+      console.error('Failed to read image directory', e);
+    }
+  }
+
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <Link href="/products" className="inline-flex items-center gap-1 text-stone-500 hover:text-stone-800 font-medium mb-6 transition-colors">
@@ -70,13 +91,7 @@ export default async function ProductDetailPage({ params }: PageProps) {
       </Link>
 
       <div className="grid md:grid-cols-2 gap-8 mb-12">
-        <div className="aspect-square bg-stone-50 rounded-3xl overflow-hidden border border-stone-100">
-          <img 
-            src={product.image_url || 'https://placehold.co/800x800/f8fafc/94a3b8?text=Product'} 
-            alt={product.name}
-            className="w-full h-full object-cover"
-          />
-        </div>
+        <ImageGallery images={productImages} alt={product.name} />
         
         <div className="flex flex-col">
           <div className="mb-4">

@@ -18,6 +18,7 @@ interface ChildDetailClientProps {
   skillCategories: SkillCategory[]
   library: any[]
   skillProgress: SkillProgress[]
+  completedProductIds: string[]
 }
 
 const CATEGORY_COLOURS: Record<string, string> = {
@@ -32,7 +33,7 @@ const CATEGORY_COLOURS: Record<string, string> = {
   'Social & Emotional Learning': 'from-red-400 to-pink-400',
 }
 
-export default function ChildDetailClient({ child, ageDisplay, skillCategories, library, skillProgress }: ChildDetailClientProps) {
+export default function ChildDetailClient({ child, ageDisplay, skillCategories, library, skillProgress, completedProductIds = [] }: ChildDetailClientProps) {
   const router = useRouter()
   const { toasts, removeToast, success, error: showError } = useToast()
 
@@ -126,34 +127,48 @@ export default function ChildDetailClient({ child, ageDisplay, skillCategories, 
         
         {library && library.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {library.map((product) => (
-              <div key={product.id} className="flex flex-col gap-3">
-                <div className="flex-1">
-                  <ProductCard product={product} />
+            {library.map((product) => {
+              const isCompleted = completedProductIds.includes(product.id);
+              return (
+                <div key={product.id} className="flex flex-col gap-3 relative">
+                  {isCompleted && (
+                    <div className="absolute top-2 right-2 z-10 bg-emerald-500 text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-md flex items-center gap-1">
+                      ✓ Completed
+                    </div>
+                  )}
+                  <div className="flex-1">
+                    <ProductCard product={product} />
+                  </div>
+                  {!isCompleted ? (
+                    <button 
+                      onClick={async () => {
+                        if (confirm('Are you sure you want to mark all activities in this book as completed?')) {
+                          try {
+                            const res = await fetch(`/api/children/${child.id}/complete-product`, {
+                              method: 'POST',
+                              headers: { 'Content-Type': 'application/json' },
+                              body: JSON.stringify({ product_id: product.id })
+                            })
+                            if (!res.ok) throw new Error('Failed to complete')
+                            success('Book marked as completed! Skills updated.')
+                            router.refresh()
+                          } catch (e: any) {
+                            showError(e.message)
+                          }
+                        }
+                      }}
+                      className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-2xl transition-all shadow-sm flex items-center justify-center gap-2 text-sm"
+                    >
+                      ✓ Mark Book as Completed
+                    </button>
+                  ) : (
+                    <div className="w-full bg-emerald-50 text-emerald-700 font-bold py-3 rounded-2xl text-center text-sm border border-emerald-100 flex items-center justify-center gap-2">
+                      ✓ Activities Finished
+                    </div>
+                  )}
                 </div>
-                <button 
-                  onClick={async () => {
-                    if (confirm('Are you sure you want to mark all activities in this book as completed?')) {
-                      try {
-                        const res = await fetch(`/api/children/${child.id}/complete-product`, {
-                          method: 'POST',
-                          headers: { 'Content-Type': 'application/json' },
-                          body: JSON.stringify({ product_id: product.id })
-                        })
-                        if (!res.ok) throw new Error('Failed to complete')
-                        success('Book marked as completed! Skills updated.')
-                        router.refresh()
-                      } catch (e: any) {
-                        showError(e.message)
-                      }
-                    }
-                  }}
-                  className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-2xl transition-all shadow-sm flex items-center justify-center gap-2 text-sm"
-                >
-                  ✓ Mark Book as Completed
-                </button>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="bg-gradient-to-br from-amber-500 to-orange-500 rounded-3xl p-8 text-white text-center shadow-md">
