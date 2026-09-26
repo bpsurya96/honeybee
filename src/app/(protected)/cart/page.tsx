@@ -16,7 +16,7 @@ export default function CartPage() {
           <div className="text-6xl mb-4">🛒</div>
           <h2 className="text-xl font-semibold text-stone-900 mb-2">Your cart is empty</h2>
           <p className="text-stone-500 mb-6">Looks like you haven't added any learning kits yet.</p>
-          <Link href="/products" className="inline-block px-6 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-semibold transition-colors">
+          <Link href="/products" className="inline-block px-6 py-3 bg-[var(--color-fun-red)] hover:bg-[var(--color-fun-red-hover)] text-white btn-pill font-semibold transition-colors">
             Browse Products
           </Link>
         </div>
@@ -90,7 +90,7 @@ export default function CartPage() {
             </div>
             <Link 
               href="/checkout"
-              className="block w-full py-3 bg-amber-500 hover:bg-amber-600 text-white text-center rounded-xl font-bold transition-colors shadow-sm"
+              className="block w-full py-3 bg-[var(--color-fun-red)] hover:bg-[var(--color-fun-red-hover)] text-white text-center btn-pill font-bold transition-colors shadow-sm"
             >
               Proceed to Checkout
             </Link>

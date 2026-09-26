@@ -87,7 +87,7 @@ export default function CheckoutClient() {
     return (
       <div className="max-w-3xl mx-auto px-4 py-12 text-center">
         <h2 className="text-2xl font-bold mb-4">Your cart is empty</h2>
-        <button onClick={() => router.push('/products')} className="px-6 py-2 bg-amber-500 text-white rounded-xl font-bold">
+        <button onClick={() => router.push('/products')} className="px-6 py-2 bg-[var(--color-fun-yellow)] text-stone-900 btn-pill font-bold">
           Browse Products
         </button>
       </div>
@@ -96,25 +96,25 @@ export default function CheckoutClient() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-display font-black text-stone-900 mb-8">Checkout</h1>
+      <h1 className="text-3xl font-display font-black text-stone-900 mb-8">Checkout 📦</h1>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <form onSubmit={handleSubmit} className="space-y-6">
             
             <div className="bg-white rounded-3xl p-6 border border-stone-100 shadow-sm">
-              <h2 className="text-xl font-bold text-stone-900 mb-4">Who is this book for?</h2>
+              <h2 className="text-xl font-bold text-[var(--color-fun-purple)] mb-4">👦 Who is this book for?</h2>
               {children.length === 0 ? (
                 <div className="text-stone-500 mb-4 text-sm">
                   No child profile found. Please add a child before placing an order.
-                  <button type="button" onClick={() => router.push('/children/new')} className="ml-2 text-amber-600 font-bold">Add Child</button>
+                  <button type="button" onClick={() => router.push('/children/new')} className="ml-2 text-[var(--color-fun-red)] font-bold">Add Child</button>
                 </div>
               ) : (
                 <div className="space-y-3">
                   <select 
                     value={selectedChild} 
                     onChange={e => setSelectedChild(e.target.value)}
-                    className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-fun-yellow)]"
                     required
                   >
                     <option value="" disabled>Select Child ▼</option>
@@ -127,7 +127,7 @@ export default function CheckoutClient() {
             </div>
 
             <div className="bg-white rounded-3xl p-6 border border-stone-100 shadow-sm">
-              <h2 className="text-xl font-bold text-stone-900 mb-4">Contact Details</h2>
+              <h2 className="text-xl font-bold text-[var(--color-fun-purple)] mb-4">📞 Contact Details</h2>
               <div>
                 <label className="block text-sm font-semibold text-stone-700 mb-1">Mobile Number</label>
                 <div className="flex gap-2">
@@ -138,7 +138,7 @@ export default function CheckoutClient() {
                     type="tel" 
                     value={mobileNumber}
                     onChange={e => setMobileNumber(e.target.value)}
-                    className="flex-1 px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    className="flex-1 px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-fun-yellow)]"
                     placeholder="Enter your 10 digit mobile number"
                     pattern="[0-9]{10}"
                     required
@@ -148,14 +148,14 @@ export default function CheckoutClient() {
             </div>
 
             <div className="bg-white rounded-3xl p-6 border border-stone-100 shadow-sm">
-              <h2 className="text-xl font-bold text-stone-900 mb-4">Delivery Details</h2>
+              <h2 className="text-xl font-bold text-[var(--color-fun-purple)] mb-4">🏠 Delivery Details</h2>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-semibold text-stone-700 mb-1">Address</label>
                   <textarea 
                     value={address}
                     onChange={e => setAddress(e.target.value)}
-                    className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 min-h-24"
+                    className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-fun-yellow)] min-h-24"
                     placeholder="House No, Building, Street Area"
                     required
                   />
@@ -167,7 +167,7 @@ export default function CheckoutClient() {
                       type="text" 
                       value={city}
                       onChange={e => setCity(e.target.value)}
-                      className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
+                      className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-fun-yellow)]"
                       required
                     />
                   </div>
@@ -177,7 +177,7 @@ export default function CheckoutClient() {
                       type="text" 
                       value={state}
                       onChange={e => setState(e.target.value)}
-                      className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
+                      className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-fun-yellow)]"
                       required
                     />
                   </div>
@@ -188,7 +188,7 @@ export default function CheckoutClient() {
                     type="text" 
                     value={pincode}
                     onChange={e => setPincode(e.target.value)}
-                    className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500"
+                    className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-fun-yellow)]"
                     pattern="[0-9]{6}"
                     placeholder="6 digit pincode"
                     required
@@ -198,7 +198,7 @@ export default function CheckoutClient() {
             </div>
 
             {error && (
-              <div className="p-4 bg-red-50 text-red-600 rounded-xl font-medium border border-red-100">
+              <div className="p-4 bg-red-50 text-[var(--color-fun-red)] rounded-xl font-medium border border-red-100">
                 {error}
               </div>
             )}
@@ -206,9 +206,9 @@ export default function CheckoutClient() {
             <button 
               type="submit" 
               disabled={loading || children.length === 0}
-              className="w-full py-4 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold text-lg transition-colors shadow-sm disabled:opacity-50"
+              className="w-full py-4 bg-[var(--color-fun-red)] hover:bg-[var(--color-fun-red-hover)] text-white btn-pill font-bold text-lg transition-colors shadow-sm disabled:opacity-50"
             >
-              {loading ? 'Processing...' : 'Place Order'}
+              {loading ? 'Processing... ⏳' : 'Place Order 🚀'}
             </button>
           </form>
         </div>
@@ -220,9 +220,9 @@ export default function CheckoutClient() {
               {items.map(item => (
                 <div key={item.product.id} className="flex justify-between items-start text-sm">
                   <div className="flex-1 pr-4">
-                    <span className="font-semibold text-stone-800">{item.quantity}x</span> {item.product.name}
+                    <span className="font-semibold text-[var(--color-fun-purple)]">{item.quantity}x</span> {item.product.name}
                   </div>
-                  <div className="font-medium text-stone-900 shrink-0">
+                  <div className="font-medium text-[var(--color-fun-red)] shrink-0">
                     ₹{(item.product.price * item.quantity).toFixed(2)}
                   </div>
                 </div>
@@ -236,6 +236,19 @@ export default function CheckoutClient() {
               <div className="flex justify-between text-lg font-black text-stone-900 pt-2 border-t border-stone-100">
                 <span>Total</span>
                 <span>₹{totalPrice.toFixed(2)}</span>
+              </div>
+            </div>
+            
+            {/* Trust Badges */}
+            <div className="mt-8 space-y-3 bg-stone-50 p-4 rounded-2xl">
+              <div className="flex items-center gap-2 text-sm text-stone-600 font-medium">
+                <span>🚚</span> Same Day Dispatch
+              </div>
+              <div className="flex items-center gap-2 text-sm text-stone-600 font-medium">
+                <span>🔒</span> Safe & Secure Payments
+              </div>
+              <div className="flex items-center gap-2 text-sm text-stone-600 font-medium">
+                <span>⭐</span> Best Quality Assured
               </div>
             </div>
           </div>

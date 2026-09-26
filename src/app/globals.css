@@ -1,5 +1,5 @@
 /* Google Fonts must be first */
-@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap");
 @import "tailwindcss";
 
 /* ============================================================
@@ -22,8 +22,15 @@
   --color-coral-400: #fb923c;
   --color-coral-500: #f97316;
   --color-coral-600: #ea580c;
+  
+  /* TinyDing Inspired Playful Colors */
+  --color-fun-red: #D92B27;
+  --color-fun-red-hover: #C52522;
+  --color-fun-purple: #4C0A78;
+  --color-fun-yellow: #FFC837;
+
   --font-sans: "Inter", system-ui, sans-serif;
-  --font-display: "Nunito", "Inter", system-ui, sans-serif;
+  --font-display: "Fredoka", "Nunito", "Inter", system-ui, sans-serif;
 }
 
 /* ---- Base ---- */
@@ -44,8 +51,9 @@ body {
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
-  font-weight: 700;
+  font-weight: 600;
   line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
 /* ---- Scrollbar ---- */
@@ -58,7 +66,7 @@ h1, h2, h3, h4, h5, h6 {
 :focus-visible { outline: 2px solid var(--color-honey-500); outline-offset: 2px; }
 
 /* ---- Selection ---- */
-::selection { background-color: var(--color-honey-200); color: var(--color-honey-900); }
+::selection { background-color: var(--color-fun-yellow); color: var(--color-honey-900); }
 
 /* ---- Animations ---- */
 @keyframes fade-in {
@@ -77,6 +85,24 @@ h1, h2, h3, h4, h5, h6 {
 .animate-slide-up { animation: slide-up 0.5s ease-out forwards; }
 .animate-progress { animation: progress-fill 1s ease-out forwards; }
 
+/* ---- Playful UI Utilities ---- */
+.btn-pill {
+  border-radius: 9999px; /* fully rounded */
+  transition: all 0.2s cubic-bezier(0.34, 1.56, 0.64, 1); /* bouncy spring */
+}
+.btn-pill:hover {
+  transform: scale(1.05);
+  box-shadow: 0 10px 25px -5px rgba(217, 43, 39, 0.4);
+}
+.card-bouncy {
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+.card-bouncy:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  border-color: var(--color-fun-yellow);
+}
+
 /* ---- Glass Card ---- */
 .glass-card {
   background: rgba(255, 255, 255, 0.7);
@@ -87,7 +113,7 @@ h1, h2, h3, h4, h5, h6 {
 
 /* ---- Progress Bar ---- */
 .progress-bar {
-  height: 10px;
+  height: 12px;
   background: #e7e5e4;
   border-radius: 9999px;
   overflow: hidden;
@@ -95,8 +121,8 @@ h1, h2, h3, h4, h5, h6 {
 .progress-bar-fill {
   height: 100%;
   border-radius: 9999px;
-  background: linear-gradient(90deg, var(--color-honey-400), var(--color-coral-500));
-  transition: width 1s ease-out;
+  background: linear-gradient(90deg, var(--color-fun-yellow), var(--color-fun-red));
+  transition: width 1s cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 /* ---- Mobile Nav ---- */

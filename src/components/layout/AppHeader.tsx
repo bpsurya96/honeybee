@@ -14,12 +14,12 @@ interface AppHeaderProps {
 }
 
 const navLinks = [
-  { href: '/dashboard', label: 'Home' },
-  { href: '/children', label: 'Children' },
-  { href: '/products', label: 'Products' },
-  { href: '/orders', label: 'Orders' },
-  { href: '/coach', label: 'Coach' },
-  { href: '/profile', label: 'Profile' },
+  { href: '/dashboard', label: 'Home 🏠' },
+  { href: '/children', label: 'Children 👦' },
+  { href: '/products', label: 'Products 📚' },
+  { href: '/orders', label: 'Orders 📦' },
+  { href: '/coach', label: 'Coach 🧠' },
+  { href: '/profile', label: 'Profile 👤' },
 ]
 
 export default function AppHeader({ user }: AppHeaderProps) {
@@ -59,10 +59,10 @@ export default function AppHeader({ user }: AppHeaderProps) {
     <header className="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-b border-stone-100 h-16">
       <div className="max-w-6xl mx-auto px-4 h-full flex items-center justify-between">
         {/* Logo */}
-        <Link href="/dashboard" className="flex items-center gap-2 shrink-0">
-          <span className="text-2xl">🐝</span>
+        <Link href="/dashboard" className="flex items-center gap-2 shrink-0 group">
+          <span className="text-2xl group-hover:scale-110 transition-transform">🐝</span>
           <span className="font-display font-800 text-lg text-stone-900 hidden sm:block">
-            HoneyBee<span className="text-amber-500"> Learning</span>
+            HoneyBee<span className="text-[var(--color-fun-red)]"> Learning</span>
           </span>
         </Link>
 
@@ -72,9 +72,9 @@ export default function AppHeader({ user }: AppHeaderProps) {
             <Link
               key={link.href}
               href={link.href}
-              className={`px-3 py-2 rounded-xl text-sm font-medium transition-colors ${
+              className={`px-3 py-2 btn-pill text-sm font-medium transition-colors ${
                 pathname.startsWith(link.href)
-                  ? 'bg-amber-100 text-amber-700'
+                  ? 'bg-[var(--color-fun-yellow)] text-stone-900 shadow-sm'
                   : 'text-stone-600 hover:bg-stone-100 hover:text-stone-900'
               }`}
             >
@@ -85,10 +85,10 @@ export default function AppHeader({ user }: AppHeaderProps) {
 
         {/* Right Actions */}
         <div className="flex items-center gap-4">
-          <Link href="/cart" className="relative p-2 text-stone-600 hover:text-amber-600 transition-colors">
+          <Link href="/cart" className="relative p-2 text-stone-600 hover:text-[var(--color-fun-red)] transition-colors hover:scale-110 duration-200">
             <ShoppingCart size={24} />
             {totalItems > 0 && (
-              <span className="absolute top-0 right-0 w-5 h-5 bg-amber-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold">
+              <span className="absolute top-0 right-0 w-5 h-5 bg-[var(--color-fun-red)] text-white rounded-full flex items-center justify-center text-[10px] font-bold">
                 {totalItems}
               </span>
             )}
@@ -98,20 +98,17 @@ export default function AppHeader({ user }: AppHeaderProps) {
           <div className="relative" ref={dropdownRef}>
             <button
               onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center gap-2 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-full px-3 py-1.5 transition-colors text-sm"
+              className="flex items-center gap-2 bg-[var(--color-fun-purple)] hover:bg-[#3b085e] border border-transparent btn-pill px-3 py-1.5 transition-colors text-sm"
             >
-              <div className="w-6 h-6 bg-amber-400 rounded-full flex items-center justify-center text-xs font-bold text-white overflow-hidden">
+              <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center text-xs font-bold text-[var(--color-fun-purple)] overflow-hidden">
                 {parentName[0].toUpperCase()}
               </div>
-              <div className="flex flex-col text-left hidden sm:block">
-                <span className="font-semibold text-amber-800 max-w-28 truncate leading-tight">
+              <div className="flex flex-col text-left hidden sm:block text-white">
+                <span className="font-semibold max-w-28 truncate leading-tight">
                   {parentName}
                 </span>
-                <span className="text-[10px] text-amber-600 font-medium leading-none">
-                  Parent Account
-                </span>
               </div>
-              <ChevronDown size={14} className={`text-amber-600 transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
+              <ChevronDown size={14} className={`text-white transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
             </button>
 
             {dropdownOpen && (
@@ -123,7 +120,7 @@ export default function AppHeader({ user }: AppHeaderProps) {
                 <Link
                   href="/profile"
                   onClick={() => setDropdownOpen(false)}
-                  className="flex items-center gap-3 px-3 py-2 rounded-xl hover:bg-amber-50 transition-colors w-full text-left"
+                  className="flex items-center gap-3 px-3 py-2 btn-pill hover:bg-[var(--color-fun-yellow)] transition-colors w-full text-left"
                 >
                   <span className="text-sm font-medium text-stone-700">My Profile</span>
                 </Link>
@@ -131,7 +128,7 @@ export default function AppHeader({ user }: AppHeaderProps) {
                   <form action="/api/auth/signout" method="POST">
                     <button
                       type="submit"
-                      className="flex w-full items-center gap-2 px-3 py-2 rounded-xl hover:bg-red-50 transition-colors text-sm text-red-500 font-medium"
+                      className="flex w-full items-center gap-2 px-3 py-2 btn-pill hover:bg-red-50 transition-colors text-sm text-red-500 font-medium"
                     >
                       Sign Out
                     </button>

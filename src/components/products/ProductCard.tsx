@@ -18,9 +18,9 @@ export default function ProductCard({ product }: ProductCardProps) {
   const { addToCart } = useCart();
   
   return (
-    <div className="bg-white rounded-3xl p-5 shadow-sm border border-stone-100 hover:shadow-md hover:border-amber-200 transition-all group flex flex-col h-full">
+    <div className="bg-white rounded-3xl p-5 shadow-sm border border-stone-100 card-bouncy flex flex-col h-full">
       <Link href={`/products/${product.id}`} className="block flex-1 flex flex-col">
-        <div className="aspect-square bg-stone-50 rounded-2xl mb-4 overflow-hidden relative">
+        <div className="aspect-square bg-stone-50 rounded-2xl mb-4 overflow-hidden relative group">
           <img 
             src={imageUrl} 
             alt={product.name} 
@@ -36,7 +36,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             <h3 className="font-display font-bold text-lg text-stone-900 leading-tight">
               {product.name}
             </h3>
-            <span className="font-bold text-amber-600">₹{product.price.toFixed(2)}</span>
+            <span className="font-bold text-[var(--color-fun-red)]">₹{product.price.toFixed(2)}</span>
           </div>
           
           <p className="text-stone-500 text-sm line-clamp-2 mb-4 flex-1">
@@ -62,9 +62,9 @@ export default function ProductCard({ product }: ProductCardProps) {
           e.preventDefault();
           addToCart(product);
         }}
-        className="mt-auto w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-semibold transition-colors"
+        className="mt-auto w-full py-2.5 bg-[#FFC837] text-stone-900 font-bold btn-pill"
       >
-        Add to Cart
+        Add to Cart 🛒
       </button>
     </div>
   )
