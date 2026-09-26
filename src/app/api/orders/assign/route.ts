@@ -36,12 +36,24 @@ export async function POST(request: NextRequest) {
     // Security check 2: Order Item belongs to user
     const { data: orderItem } = await supabase
       .from('order_items')
-      .select('id, orders!inner(parent_id)')
+      .select('id, product_id, orders!inner(parent_id)')
       .eq('id', order_item_id)
       .single()
     
     if (!orderItem || (orderItem.orders as any).parent_id !== user.id) {
       return NextResponse.json({ error: 'Order item not found or not owned by you' }, { status: 403 })
+    }
+
+    // Check if child already has this product linked
+    const { data: existingAssignment } = await supabase
+      .from('child_products')
+      .select('id, order_items!inner(product_id)')
+      .eq('child_id', child_id)
+      .eq('order_items.product_id', orderItem.product_id)
+      .maybeSingle()
+
+    if (existingAssignment) {
+      return NextResponse.json({ error: 'This child already has this book in their library.' }, { status: 400 })
     }
 
     // Upsert assignment
@@ -62,3 +74,4 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: error.message || 'Internal error' }, { status: 500 })
   }
 }
+

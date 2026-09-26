@@ -92,6 +92,8 @@ export default function ChildDetailClient({ child, ageDisplay, skillCategories, 
         <div className="space-y-4">
           {skillCategories.slice(0, 6).map((cat) => {
             const gradient = CATEGORY_COLOURS[cat.name] || 'from-amber-400 to-orange-400'
+            const progress = skillProgress.find(p => p.category.id === cat.id)
+            const percentage = progress ? Math.round(progress.percentage) : 0
             return (
               <div key={cat.id}>
                 <div className="flex justify-between items-center mb-1.5">
@@ -99,10 +101,10 @@ export default function ChildDetailClient({ child, ageDisplay, skillCategories, 
                     <span>{cat.icon}</span>
                     {cat.name}
                   </span>
-                  <span className="text-sm font-bold text-stone-900">0%</span>
+                  <span className="text-sm font-bold text-stone-900">{percentage}%</span>
                 </div>
                 <div className="h-2.5 bg-stone-100 rounded-full overflow-hidden">
-                  <div className={`h-full bg-gradient-to-r ${gradient} rounded-full`} style={{ width: '0%', transition: 'width 1s ease-out' }} />
+                  <div className={`h-full bg-gradient-to-r ${gradient} rounded-full`} style={{ width: `${percentage}%`, transition: 'width 1s ease-out' }} />
                 </div>
               </div>
             )
@@ -125,7 +127,32 @@ export default function ChildDetailClient({ child, ageDisplay, skillCategories, 
         {library && library.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {library.map((product) => (
-              <ProductCard key={product.id} product={product} />
+              <div key={product.id} className="flex flex-col gap-3">
+                <div className="flex-1">
+                  <ProductCard product={product} />
+                </div>
+                <button 
+                  onClick={async () => {
+                    if (confirm('Are you sure you want to mark all activities in this book as completed?')) {
+                      try {
+                        const res = await fetch(`/api/children/${child.id}/complete-product`, {
+                          method: 'POST',
+                          headers: { 'Content-Type': 'application/json' },
+                          body: JSON.stringify({ product_id: product.id })
+                        })
+                        if (!res.ok) throw new Error('Failed to complete')
+                        success('Book marked as completed! Skills updated.')
+                        router.refresh()
+                      } catch (e: any) {
+                        showError(e.message)
+                      }
+                    }
+                  }}
+                  className="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 rounded-2xl transition-all shadow-sm flex items-center justify-center gap-2 text-sm"
+                >
+                  ✓ Mark Book as Completed
+                </button>
+              </div>
             ))}
           </div>
         ) : (
