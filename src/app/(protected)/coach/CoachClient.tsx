@@ -3,7 +3,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { useChat } from 'ai/react'
+import { useChat } from '@ai-sdk/react'
 import { Send, Bot, User, AlertCircle, Loader2 } from 'lucide-react'
 
 interface CoachClientProps {
@@ -15,6 +15,7 @@ export default function CoachClient({ childrenList }: CoachClientProps) {
   
   const { messages, input, handleInputChange, handleSubmit, isLoading, error } = useChat({
     api: '/api/chat',
+    streamProtocol: 'text',
     body: {
       childId: selectedChildId || undefined
     },

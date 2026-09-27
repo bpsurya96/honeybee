@@ -24,9 +24,19 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const saved = localStorage.getItem('honeybee_cart');
     if (saved) {
       try {
-        setItems(JSON.parse(saved));
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) {
+          // Sanitize the cart items to prevent crashes from malformed local storage
+          const validItems = parsed.filter(item => 
+            item && 
+            item.product && 
+            typeof item.product.price === 'number'
+          );
+          setItems(validItems);
+        }
       } catch (e) {
         console.error('Failed to parse cart', e);
+        localStorage.removeItem('honeybee_cart'); // Clear corrupted storage
       }
     }
   }, []);
@@ -39,10 +49,10 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addToCart = (product: Product, quantity: number = 1) => {
     setItems(current => {
-      const existing = current.find(item => item.product.id === product.id);
+      const existing = current.find(item => item.product?.id === product.id);
       if (existing) {
         return current.map(item =>
-          item.product.id === product.id
+          item.product?.id === product.id
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
@@ -52,7 +62,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   };
 
   const removeFromCart = (productId: string) => {
-    setItems(current => current.filter(item => item.product.id !== productId));
+    setItems(current => current.filter(item => item.product?.id !== productId));
   };
 
   const updateQuantity = (productId: string, quantity: number) => {
@@ -62,15 +72,16 @@ export function CartProvider({ children }: { children: ReactNode }) {
     }
     setItems(current =>
       current.map(item =>
-        item.product.id === productId ? { ...item, quantity } : item
+        item.product?.id === productId ? { ...item, quantity } : item
       )
     );
   };
 
   const clearCart = () => setItems([]);
 
-  const totalItems = items.reduce((sum, item) => sum + item.quantity, 0);
-  const totalPrice = items.reduce((sum, item) => sum + (item.product.price * item.quantity), 0);
+  // Use optional chaining just in case
+  const totalItems = items.reduce((sum, item) => sum + (item.quantity || 0), 0);
+  const totalPrice = items.reduce((sum, item) => sum + ((item.product?.price || 0) * (item.quantity || 0)), 0);
 
   return (
     <CartContext.Provider
