@@ -78,7 +78,7 @@ export default function LoginForm() {
           required
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          placeholder="Ã‚â€¢Ã‚â€¢Ã‚â€¢Ã‚â€¢Ã‚â€¢Ã‚â€¢Ã‚â€¢Ã‚â€¢"
+          placeholder="********"
           className="w-full px-4 py-3 rounded-2xl border border-stone-200 focus:border-amber-400 focus:outline-none focus:ring-2 focus:ring-amber-200 transition-all text-stone-900 placeholder:text-stone-400 bg-white"
         />
       </div>
