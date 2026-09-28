@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @next/next/no-img-element */
 'use client'
 
 import React from 'react'
@@ -19,23 +21,23 @@ const CATEGORY_COLOURS: Record<string, string> = {
 interface ChildDetailClientProps {
   child: Child
   ageDisplay: string
-  skillCategories: SkillCategory[]
   skillProgress: {
     category: SkillCategory
     completed: number
     total: number
     percentage: number
   }[]
+  overallProgress: number
   library: Product[]
   completedProductIds: string[]
   aiSummaryNode?: React.ReactNode
 }
 
-export default function ChildDetailClient({ 
-  child, 
-  ageDisplay, 
-  skillCategories, 
-  skillProgress, 
+export default function ChildDetailClient({
+  child,
+  ageDisplay,
+  skillProgress,
+  overallProgress,
   library,
   completedProductIds,
   aiSummaryNode
@@ -159,16 +161,14 @@ export default function ChildDetailClient({
         )}
       </div>
 
-      {/* 3. Stats */}
+      {/* 3. Stats — Products and Progress only */}
       <h2 className="text-2xl font-display font-black text-stone-900 mb-4">
         📊 Stats
       </h2>
-      <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-10">
+      <div className="grid grid-cols-2 gap-4 mb-10">
         {[
-          { label: 'Activities Done', value: '0', icon: '📝' },
           { label: 'Products', value: library.length.toString(), icon: '📦' },
-          { label: 'Streak', value: '0 days', icon: '🔥' },
-          { label: 'Progress', value: '0%', icon: '📈' },
+          { label: 'Progress', value: `${overallProgress}%`, icon: '📈' },
         ].map((stat) => (
           <div key={stat.label} className="bg-white rounded-3xl p-4 shadow-sm border border-stone-100 text-center card-bouncy">
             <div className="text-2xl mb-1">{stat.icon}</div>
@@ -178,36 +178,56 @@ export default function ChildDetailClient({
         ))}
       </div>
 
-      {/* 4. AI Learning Profile */}
+      {/* 4. AI Learning Summary (moved from AILearningSummary, now just recommendations + AI chat prompt) */}
       {aiSummaryNode}
 
       {/* 5. Learning Areas */}
       <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-100 mb-8 mt-8">
         <h2 className="font-display font-bold text-xl text-stone-900 mb-6">🎯 Learning Areas Breakdown</h2>
-        <div className="space-y-5">
-          {skillCategories.slice(0, 6).map((cat) => {
-            const gradient = CATEGORY_COLOURS[cat.name] || 'from-stone-400 to-stone-500'
-            const progress = skillProgress.find(p => p.category.id === cat.id)
-            const percentage = progress ? Math.round(progress.percentage) : 0
-            return (
-              <div key={cat.id}>
-                <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm font-bold text-stone-700 flex items-center gap-2">
-                    <span>{cat.icon}</span>
-                    {cat.name}
-                  </span>
-                  <span className="text-sm font-black text-[var(--color-fun-purple)]">{percentage}%</span>
-                </div>
-                <div className="h-3 bg-stone-100 rounded-full overflow-hidden shadow-inner">
-                  <div className={`h-full bg-gradient-to-r ${gradient} rounded-full`} style={{ width: `${percentage}%`, transition: 'width 1s ease-out' }} />
-                </div>
-              </div>
-            )
-          })}
-        </div>
-        <p className="text-stone-400 font-medium text-xs mt-6 text-center">
-          *Progress updates as activities are completed.
-        </p>
+        {skillProgress.some(p => p.total > 0) ? (
+          <div className="space-y-5">
+            {skillProgress
+              .filter(p => p.total > 0)
+              .slice(0, 6)
+              .map((p) => {
+                const gradient = CATEGORY_COLOURS[p.category.name] || 'from-stone-400 to-stone-500'
+                const percentage = Math.round(p.percentage)
+                return (
+                  <div key={p.category.id}>
+                    <div className="flex justify-between items-center mb-2">
+                      <span className="text-sm font-bold text-stone-700 flex items-center gap-2">
+                        <span>{p.category.icon}</span>
+                        {p.category.name}
+                      </span>
+                      <span className="text-sm font-black text-[var(--color-fun-purple)]">
+                        {percentage}% ({p.completed}/{p.total})
+                      </span>
+                    </div>
+                    <div className="h-3 bg-stone-100 rounded-full overflow-hidden shadow-inner">
+                      <div
+                        className={`h-full bg-gradient-to-r ${gradient} rounded-full`}
+                        style={{ width: `${percentage}%`, transition: 'width 1s ease-out' }}
+                      />
+                    </div>
+                  </div>
+                )
+              })}
+          </div>
+        ) : (
+          <div className="text-center py-6">
+            <div className="text-4xl mb-3">📚</div>
+            <p className="text-stone-500 font-medium">
+              {library.length === 0
+                ? 'Assign a learning kit to start tracking progress by area.'
+                : 'Complete activities to see progress by learning area.'}
+            </p>
+          </div>
+        )}
+        {skillProgress.some(p => p.total > 0) && (
+          <p className="text-stone-400 font-medium text-xs mt-6 text-center">
+            *Progress updates as activities are completed. Each activity counted once per area.
+          </p>
+        )}
       </div>
 
       <ToastContainer toasts={toasts} onDismiss={removeToast} />

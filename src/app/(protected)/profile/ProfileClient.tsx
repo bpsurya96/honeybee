@@ -135,6 +135,22 @@ export default function ProfileClient({ profile, email, createdAt }: ProfileClie
         )}
       </div>
 
+      {/* AI Credits — parent account-level balance */}
+      <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-100 mb-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-purple-100 rounded-2xl flex items-center justify-center text-lg">✨</div>
+            <div>
+              <p className="font-display font-bold text-stone-900">AI Credits</p>
+              <p className="text-stone-500 text-xs">Account balance · used for AI Coach</p>
+            </div>
+          </div>
+          <span className="text-[var(--color-fun-purple)] font-black text-xl bg-purple-50 px-4 py-2 btn-pill border border-purple-100">
+            ₹{(profile?.ai_credits ?? 0).toFixed(2)}
+          </span>
+        </div>
+      </div>
+
       {/* Sign Out */}
       <form action="/api/auth/signout" method="post">
         <button

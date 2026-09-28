@@ -87,7 +87,7 @@ Encourage them to add their child's profile to get personalised learning recomme
 
     // Call Gemini
     const result = await streamText({
-      model: google('gemini-3.8-flash'),
+      model: google('gemini-3.5-flash-lite'),
       system: systemPrompt,
       messages,
     })
