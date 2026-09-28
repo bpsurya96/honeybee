@@ -49,15 +49,15 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const addToCart = (product: Product, quantity: number = 1) => {
     setItems(current => {
-      const existing = current.find(item => item.product?.id === product.id);
+      const existing = current.find(item => item.product?.id === product.id && !item.is_gift && !item.is_gift);
       if (existing) {
         return current.map(item =>
-          item.product?.id === product.id
+          item.product?.id === product.id && !item.is_gift
             ? { ...item, quantity: item.quantity + quantity }
             : item
         );
       }
-      return [...current, { product, quantity }];
+      return [...current, { product, quantity, is_gift: false }];
     });
   };
 

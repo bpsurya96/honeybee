@@ -11,16 +11,16 @@ import {
   ResponsiveContainer,
   Tooltip
 } from 'recharts'
-import type { SkillProgress } from '@/types'
+import type { LearningAreaProgress } from '@/types'
 
 interface SkillRadarChartProps {
-  data: SkillProgress[]
+  data: LearningAreaProgress[]
 }
 
 export default function SkillRadarChart({ data }: SkillRadarChartProps) {
   // Format data for Recharts
   const chartData = data.map(item => ({
-    subject: item.category.name,
+    subject: item.learning_area.name,
     score: Math.round(item.percentage) || 0,
     fullMark: 100,
   }))

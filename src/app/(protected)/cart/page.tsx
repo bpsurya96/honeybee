@@ -34,7 +34,7 @@ export default function CartPage() {
             <div key={item.product.id} className="bg-white rounded-2xl p-4 border border-stone-100 shadow-sm flex items-center gap-4">
               <div className="w-24 h-24 bg-stone-50 rounded-xl overflow-hidden shrink-0">
                 <img 
-                  src={item.product.image_url || 'https://placehold.co/400x400/f8fafc/94a3b8?text=Product'} 
+                  src={item.product.images?.[0]?.image_url || 'https://placehold.co/400x400/f8fafc/94a3b8?text=Product'} 
                   alt={item.product.name}
                   className="w-full h-full object-cover"
                 />

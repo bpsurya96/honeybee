@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
+import MakeAdminButton from './MakeAdminButton'
 import { formatAge, calculateAgeMonths } from '@/lib/utils'
 
 export const metadata: Metadata = {
@@ -81,8 +82,11 @@ export default async function DashboardPage() {
               )
             })}
           </div>
-        </div>
-      ) : (
+          <div className="mt-8 flex justify-end">
+        <MakeAdminButton />
+      </div>
+    </div>
+  ) : (
         /* Empty State */
         <div className="text-center py-16">
           <div className="text-6xl mb-4">🐝</div>
@@ -100,8 +104,15 @@ export default async function DashboardPage() {
             <span>Add First Child</span>
             <span>🚀</span>
           </Link>
-        </div>
-      )}
+          <div className="mt-8 flex justify-end">
+        <MakeAdminButton />
+      </div>
+    </div>
+  )}
+      <div className="mt-8 flex justify-end">
+        <MakeAdminButton />
+      </div>
     </div>
   )
 }
+

@@ -11,7 +11,9 @@ export default function CheckoutClient() {
   const router = useRouter();
   
   const [children, setChildren] = useState<Child[]>([]);
-  const [selectedChild, setSelectedChild] = useState<string>('');
+  // Store selections per item index. True = gift, string = childId
+  const [itemSelections, setItemSelections] = useState<{isGift: boolean, childId: string}[]>([]);
+  
   const [mobileNumber, setMobileNumber] = useState('');
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
@@ -33,39 +35,61 @@ export default function CheckoutClient() {
         
         if (data && data.length > 0) {
           setChildren(data);
-          setSelectedChild(data[0].id);
+          // Initialize selections
+          setItemSelections(items.map(() => ({ isGift: false, childId: data[0].id })));
+        } else {
+          setItemSelections(items.map(() => ({ isGift: true, childId: '' })));
         }
       }
     };
-    fetchChildren();
-  }, []);
+    if (items.length > 0) {
+      fetchChildren();
+    }
+  }, [items]);
+
+  const handleSelectionChange = (index: number, type: 'gift' | 'child', value: string) => {
+    const newSelections = [...itemSelections];
+    if (type === 'gift') {
+      newSelections[index] = { isGift: true, childId: '' };
+    } else {
+      newSelections[index] = { isGift: false, childId: value };
+    }
+    setItemSelections(newSelections);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (items.length === 0) return;
-    if (!selectedChild) {
-      setError('Please select a child for this order');
-      return;
+    
+    // Validate selections
+    for (let i = 0; i < items.length; i++) {
+      if (!itemSelections[i]?.isGift && !itemSelections[i]?.childId) {
+        setError('Please select a recipient child or mark as gift for all items');
+        return;
+      }
     }
     
     setLoading(true);
     setError('');
 
     try {
+      const payloadItems = items.map((item, index) => ({
+        product_id: item.product.id,
+        quantity: item.quantity,
+        is_gift: itemSelections[index].isGift,
+        recipient_child_id: itemSelections[index].isGift ? null : itemSelections[index].childId
+      }));
+
       const response = await fetch('/api/orders/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          child_id: selectedChild,
           mobile_number: mobileNumber,
           delivery_address: address,
           delivery_city: city,
           delivery_state: state,
           delivery_pincode: pincode,
-          items: items.map(item => ({
-            product_id: item.product.id,
-            quantity: item.quantity,
-          }))
+          items: payloadItems
         })
       });
 
@@ -95,39 +119,61 @@ export default function CheckoutClient() {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-display font-black text-stone-900 mb-8">Checkout 📦</h1>
+    <div className="max-w-6xl mx-auto px-4 py-8">
+      <h1 className="text-3xl font-display font-black text-stone-900 mb-8">Checkout</h1>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <form onSubmit={handleSubmit} className="space-y-6">
             
             <div className="bg-white rounded-3xl p-6 border border-stone-100 shadow-sm">
-              <h2 className="text-xl font-bold text-[var(--color-fun-purple)] mb-4">👦 Who is this book for?</h2>
-              {children.length === 0 ? (
+              <h2 className="text-xl font-bold text-[var(--color-fun-purple)] mb-4">?? Item Recipients</h2>
+              {children.length === 0 && (
                 <div className="text-stone-500 mb-4 text-sm">
-                  No child profile found. Please add a child before placing an order.
+                  You have no children profiles. Items will be marked as gifts.
                   <button type="button" onClick={() => router.push('/children/new')} className="ml-2 text-[var(--color-fun-red)] font-bold">Add Child</button>
                 </div>
-              ) : (
-                <div className="space-y-3">
-                  <select 
-                    value={selectedChild} 
-                    onChange={e => setSelectedChild(e.target.value)}
-                    className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-fun-yellow)]"
-                    required
-                  >
-                    <option value="" disabled>Select Child ▼</option>
-                    {children.map(child => (
-                      <option key={child.id} value={child.id}>{child.name}</option>
-                    ))}
-                  </select>
-                </div>
               )}
+              
+              <div className="space-y-6">
+                {items.map((item, index) => (
+                  <div key={index} className="flex flex-col sm:flex-row gap-4 p-4 border border-stone-100 rounded-2xl bg-stone-50 items-center">
+                    <img 
+                      src={item.product.images?.[0]?.image_url || 'https://placehold.co/100x100/f8fafc/94a3b8?text=Product'} 
+                      className="w-16 h-16 rounded-lg object-cover" 
+                      alt="" 
+                    />
+                    <div className="flex-1 text-sm font-semibold">{item.product.name} (x{item.quantity})</div>
+                    
+                    <div className="flex gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleSelectionChange(index, 'gift', '')}
+                        className={`px-4 py-2 rounded-xl text-sm font-bold transition-colors ${itemSelections[index]?.isGift ? 'bg-[var(--color-fun-purple)] text-white' : 'bg-white border border-stone-200 text-stone-600'}`}
+                      >
+                        Gift ??
+                      </button>
+                      
+                      {children.length > 0 && (
+                        <select
+                          value={itemSelections[index]?.isGift ? '' : itemSelections[index]?.childId}
+                          onChange={(e) => handleSelectionChange(index, 'child', e.target.value)}
+                          className={`px-4 py-2 rounded-xl text-sm font-bold focus:outline-none transition-colors ${!itemSelections[index]?.isGift ? 'bg-[var(--color-fun-blue)] text-white' : 'bg-white border border-stone-200 text-stone-600'}`}
+                        >
+                          <option value="" disabled>Select Child</option>
+                          {children.map(c => (
+                            <option key={c.id} value={c.id}>{c.name}</option>
+                          ))}
+                        </select>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
             </div>
 
             <div className="bg-white rounded-3xl p-6 border border-stone-100 shadow-sm">
-              <h2 className="text-xl font-bold text-[var(--color-fun-purple)] mb-4">📞 Contact Details</h2>
+              <h2 className="text-xl font-bold text-[var(--color-fun-purple)] mb-4">?? Contact Details</h2>
               <div>
                 <label className="block text-sm font-semibold text-stone-700 mb-1">Mobile Number</label>
                 <div className="flex gap-2">
@@ -148,7 +194,7 @@ export default function CheckoutClient() {
             </div>
 
             <div className="bg-white rounded-3xl p-6 border border-stone-100 shadow-sm">
-              <h2 className="text-xl font-bold text-[var(--color-fun-purple)] mb-4">🏠 Delivery Details</h2>
+              <h2 className="text-xl font-bold text-[var(--color-fun-purple)] mb-4">?? Delivery Details</h2>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-semibold text-stone-700 mb-1">Address</label>
@@ -205,10 +251,10 @@ export default function CheckoutClient() {
 
             <button 
               type="submit" 
-              disabled={loading || children.length === 0}
+              disabled={loading}
               className="w-full py-4 bg-[var(--color-fun-red)] hover:bg-[var(--color-fun-red-hover)] text-white btn-pill font-bold text-lg transition-colors shadow-sm disabled:opacity-50"
             >
-              {loading ? 'Processing... ⏳' : 'Place Order 🚀'}
+              {loading ? 'Processing... ?' : 'Place Order ??'}
             </button>
           </form>
         </div>
@@ -217,13 +263,13 @@ export default function CheckoutClient() {
           <div className="bg-white rounded-3xl p-6 border border-stone-100 shadow-sm sticky top-24">
             <h2 className="text-xl font-bold text-stone-900 mb-4">Order Summary</h2>
             <div className="space-y-4 mb-6">
-              {items.map(item => (
-                <div key={item.product.id} className="flex justify-between items-start text-sm">
+              {items.map((item, index) => (
+                <div key={index} className="flex justify-between items-start text-sm">
                   <div className="flex-1 pr-4">
                     <span className="font-semibold text-[var(--color-fun-purple)]">{item.quantity}x</span> {item.product.name}
                   </div>
                   <div className="font-medium text-[var(--color-fun-red)] shrink-0">
-                    ₹{(item.product.price * item.quantity).toFixed(2)}
+                    ?{(item.product.price * item.quantity).toFixed(2)}
                   </div>
                 </div>
               ))}
@@ -231,24 +277,11 @@ export default function CheckoutClient() {
             <div className="border-t border-stone-100 pt-4 space-y-2">
               <div className="flex justify-between text-sm text-stone-600">
                 <span>Subtotal</span>
-                <span>₹{totalPrice.toFixed(2)}</span>
+                <span>?{totalPrice.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-lg font-black text-stone-900 pt-2 border-t border-stone-100">
                 <span>Total</span>
-                <span>₹{totalPrice.toFixed(2)}</span>
-              </div>
-            </div>
-            
-            {/* Trust Badges */}
-            <div className="mt-8 space-y-3 bg-stone-50 p-4 rounded-2xl">
-              <div className="flex items-center gap-2 text-sm text-stone-600 font-medium">
-                <span>🚚</span> Same Day Dispatch
-              </div>
-              <div className="flex items-center gap-2 text-sm text-stone-600 font-medium">
-                <span>🔒</span> Safe & Secure Payments
-              </div>
-              <div className="flex items-center gap-2 text-sm text-stone-600 font-medium">
-                <span>⭐</span> Best Quality Assured
+                <span>?{totalPrice.toFixed(2)}</span>
               </div>
             </div>
           </div>

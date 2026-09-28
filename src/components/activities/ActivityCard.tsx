@@ -21,11 +21,11 @@ export default function ActivityCard({ activity }: ActivityCardProps) {
       <div className="flex-1">
         <div className="flex justify-between items-start gap-2 mb-1">
           <h4 className="font-display font-bold text-stone-900 group-hover:text-amber-600 transition-colors">
-            {activity.name}
+            {activity.title}
           </h4>
-          {activity.duration_mins && (
+          {false && (
             <span className="text-xs font-bold text-stone-400 bg-stone-100 px-2 py-0.5 rounded-full whitespace-nowrap">
-              {activity.duration_mins} min
+              {false} min
             </span>
           )}
         </div>

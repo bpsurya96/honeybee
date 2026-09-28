@@ -1,5 +1,5 @@
 // ============================================================
-// HoneyBee Learning — Core TypeScript Types
+// HoneyBee Learning - Core TypeScript Types
 // ============================================================
 
 // ----- Database Row Types -----
@@ -11,6 +11,11 @@ export interface Profile {
   ai_credits: number
   created_at: string
   updated_at: string
+}
+
+export interface AdminUser {
+  user_id: string
+  created_at: string
 }
 
 export interface Child {
@@ -26,33 +31,30 @@ export interface Child {
 
 export interface AgeStage {
   id: string
-  label: string
+  name: string
   min_months: number
   max_months: number
   description: string | null
-  display_order: number
+  created_at: string
 }
 
-export interface SkillCategory {
+export interface LearningArea {
   id: string
   name: string
   description: string | null
-  icon: string | null
-  colour: string | null
-  display_order: number
   active: boolean
+  display_order: number
+  created_at: string
 }
 
 export interface Skill {
   id: string
-  category_id: string
+  learning_area_id: string
   name: string
   description: string | null
-  age_stage_id: string | null
-  display_order: number
-  active: boolean
+  created_at: string
   // joined
-  category?: SkillCategory
+  learning_area?: LearningArea
 }
 
 export interface Product {
@@ -60,29 +62,34 @@ export interface Product {
   name: string
   slug: string
   description: string | null
-  image_url: string | null
   price: number
-  age_min_months: number
-  age_max_months: number
+  min_age_months: number
+  max_age_months: number
   active: boolean
   created_at: string
   updated_at: string
   // joined
   skills?: Skill[]
   activities?: Activity[]
+  images?: ProductImage[]
+}
+
+export interface ProductImage {
+  id: string
+  product_id: string
+  image_url: string
+  alt_text: string | null
+  display_order: number
+  is_primary: boolean
+  created_at: string
 }
 
 export interface Activity {
   id: string
   product_id: string
-  name: string
+  title: string
   description: string | null
-  instructions: string | null
-  age_min_months: number
-  age_max_months: number
-  difficulty: number // 1-5
-  sequence_order: number
-  duration_mins: number | null
+  display_order: number
   active: boolean
   created_at: string
   updated_at: string
@@ -94,10 +101,9 @@ export interface Activity {
 export interface Order {
   id: string
   parent_id: string
-  child_id?: string | null
-  status: 'new' | 'pending_confirmation' | 'pending' | 'paid' | 'failed' | 'refunded'
-  delivery_status: 'pending' | 'processing' | 'shipped' | 'delivered'
+  status: string
   payment_status: 'pending' | 'paid' | 'failed' | 'refunded'
+  delivery_status: string
   mobile_number?: string | null
   delivery_address?: string | null
   delivery_city?: string | null
@@ -110,7 +116,6 @@ export interface Order {
   updated_at: string
   // joined
   items?: OrderItem[]
-  child?: Child
 }
 
 export interface OrderItem {
@@ -119,10 +124,12 @@ export interface OrderItem {
   product_id: string
   quantity: number
   unit_price: number
+  is_gift: boolean
+  recipient_child_id?: string | null
   created_at: string
   // joined
   product?: Product
-  child_assignment?: ChildProduct
+  recipient_child?: Child
 }
 
 export interface AiCreditTransaction {
@@ -131,30 +138,50 @@ export interface AiCreditTransaction {
   order_id?: string | null
   amount: number
   reason: string
-  status: 'pending' | 'completed' | 'failed'
+  status: string
   created_at: string
 }
 
 export interface ChildProduct {
   id: string
   child_id: string
+  product_id: string
   order_item_id: string
-  assigned_at: string
   active: boolean
+  created_at: string
+  updated_at: string
+  // joined
+  product?: Product
 }
 
 export interface ChildActivity {
-  id: string
   child_id: string
   activity_id: string
   completed: boolean
   completed_at: string | null
-  notes: string | null
   duration_mins: number | null
+  notes: string | null
   created_at: string
   updated_at: string
   // joined
   activity?: Activity
+}
+
+export interface AiConversation {
+  id: string
+  parent_id: string
+  child_id?: string | null
+  title: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface AiMessage {
+  id: string
+  conversation_id: string
+  role: 'user' | 'assistant' | 'system'
+  content: string
+  created_at: string
 }
 
 // ----- Computed/Application Types -----
@@ -165,8 +192,8 @@ export interface ChildWithAge extends Child {
   age_stage?: AgeStage
 }
 
-export interface SkillProgress {
-  category: SkillCategory
+export interface LearningAreaProgress {
+  learning_area: LearningArea
   completed: number
   total: number
   percentage: number
@@ -179,7 +206,7 @@ export interface ChildDashboardData {
     total: number
     percentage: number
   }
-  skill_progress: SkillProgress[]
+  learning_area_progress: LearningAreaProgress[]
   recent_completions: ChildActivity[]
   assigned_products: Product[]
   recommended_activities: Activity[]
@@ -189,6 +216,8 @@ export interface ChildDashboardData {
 export interface CartItem {
   product: Product
   quantity: number
+  is_gift: boolean
+  recipient_child_id?: string | null
 }
 
 // ----- API Response Types -----

@@ -1,6 +1,7 @@
 import React from 'react';
 import { createClient } from '@/lib/supabase/server';
 import Link from 'next/link';
+import SimulatePaymentButton from './SimulatePaymentButton';
 
 export default async function OrderConfirmationPage(props: { params: Promise<{ id: string }> }) {
   const params = await props.params;
@@ -11,8 +12,7 @@ export default async function OrderConfirmationPage(props: { params: Promise<{ i
     .from('orders')
     .select(`
       *,
-      children (name),
-      order_items (quantity)
+      order_items (quantity, is_gift, children(name))
     `)
     .eq('id', id)
     .single();
@@ -32,7 +32,7 @@ export default async function OrderConfirmationPage(props: { params: Promise<{ i
   return (
     <div className="max-w-2xl mx-auto px-4 py-16 text-center">
       <div className="bg-white rounded-3xl p-10 border border-stone-100 shadow-sm">
-        <div className="text-6xl mb-6">🎉</div>
+        <div className="text-6xl mb-6">??</div>
         <h1 className="text-3xl font-display font-black text-stone-900 mb-4">
           Order Placed Successfully
         </h1>
@@ -47,16 +47,12 @@ export default async function OrderConfirmationPage(props: { params: Promise<{ i
             <span className="font-bold text-stone-900">#ORD-{order.id.substring(0, 8).toUpperCase()}</span>
           </div>
           <div className="flex justify-between border-b border-stone-200 pb-3">
-            <span className="text-stone-500">Child:</span>
-            <span className="font-semibold text-stone-900">{order.children?.name}</span>
-          </div>
-          <div className="flex justify-between border-b border-stone-200 pb-3">
             <span className="text-stone-500">Books:</span>
             <span className="font-semibold text-stone-900">{totalBooks}</span>
           </div>
           <div className="flex justify-between border-b border-stone-200 pb-3">
             <span className="text-stone-500">Order Total:</span>
-            <span className="font-bold text-amber-600">₹{order.total.toFixed(2)}</span>
+            <span className="font-bold text-amber-600">?{order.total.toFixed(2)}</span>
           </div>
           <div className="flex justify-between pb-1">
             <span className="text-stone-500">Payment:</span>
@@ -64,13 +60,19 @@ export default async function OrderConfirmationPage(props: { params: Promise<{ i
           </div>
         </div>
         
-        <p className="text-stone-500 text-sm mb-8">
+        <p className="text-stone-500 text-sm mb-4">
           Our team will contact you shortly to complete the payment.
         </p>
 
+        {order.payment_status === 'pending' && (
+          <div className="mb-8">
+            <SimulatePaymentButton orderId={order.id} />
+          </div>
+        )}
+
         <Link 
           href="/dashboard"
-          className="inline-block px-8 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold transition-colors"
+          className="inline-block px-8 py-3 bg-amber-500 hover:bg-amber-600 text-white rounded-xl font-bold transition-colors w-full sm:w-auto"
         >
           Return Home
         </Link>
