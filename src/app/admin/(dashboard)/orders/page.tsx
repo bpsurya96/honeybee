@@ -38,6 +38,7 @@ export default function OrdersPage() {
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Payment</th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Delivery</th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Total</th>
+                  <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-100">
@@ -66,6 +67,9 @@ export default function OrdersPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
                       $${Number(o.total).toFixed(2)}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <Link href={`/admin/orders/${o.id}`} className="text-amber-600 hover:text-amber-900 font-bold bg-amber-50 px-3 py-1.5 rounded-full border border-amber-100">Edit</Link>
                     </td>
                   </tr>
                 ))}

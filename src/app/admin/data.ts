@@ -35,9 +35,9 @@ export async function getAdminStats() {
       acc[month].sales += 1;
       acc[month].revenue += Number(order.total);
       return acc;
-    }, {});
+    }, {} as Record<string, {sales: number, revenue: number}>);
     for (const [name, data] of Object.entries(grouped)) {
-      salesData.push({ name, sales: data.sales, revenue: data.revenue });
+      salesData.push({ name, sales: (data as any).sales, revenue: (data as any).revenue });
     }
   }
 

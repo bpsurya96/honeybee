@@ -103,8 +103,8 @@ export default function CheckoutClient() {
           <form onSubmit={handleSubmit} className="space-y-6">
             
             <div className="bg-white rounded-3xl p-6 border border-stone-100 shadow-sm">
-              <h2 className="text-xl font-bold text-[var(--color-fun-purple)] mb-4">👦 Who is this book for?</h2>
-              {children.length === 0 ? (
+              <div className="flex justify-between items-center mb-4"><h2 className="text-xl font-bold text-[var(--color-fun-purple)]">👦 Who is this book for?</h2><button type="button" onClick={() => router.push('/children/new')} className="text-[var(--color-fun-red)] text-sm font-bold hover:underline bg-red-50 px-3 py-1 rounded-full">+ Add New Child</button></div>
+              {false ? (
                 <div className="text-stone-500 mb-4 text-sm">
                   No child profile found. Please add a child before placing an order.
                   <button type="button" onClick={() => router.push('/children/new')} className="ml-2 text-[var(--color-fun-red)] font-bold">Add Child</button>
@@ -121,6 +121,7 @@ export default function CheckoutClient() {
                     {children.map(child => (
                       <option key={child.id} value={child.id}>{child.name}</option>
                     ))}
+                    <option value="gift">🎁 Other / Gift</option>
                   </select>
                 </div>
               )}

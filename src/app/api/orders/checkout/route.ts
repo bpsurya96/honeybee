@@ -20,7 +20,12 @@ export async function POST(request: Request) {
     }
 
     // Verify child belongs to parent
-    const { data: childData, error: childError } = await supabase
+    let finalChildId = child_id;
+    let finalChildName = 'Gift';
+    if (child_id === 'gift') {
+      finalChildId = null;
+    } else {
+      const { data: childData, error: childError } = await supabase
       .from('children')
       .select('id, name')
       .eq('id', child_id)
@@ -29,6 +34,8 @@ export async function POST(request: Request) {
 
     if (childError || !childData) {
       return NextResponse.json({ error: 'Invalid child selected' }, { status: 400 });
+    }
+      finalChildName = childData.name;
     }
 
     // Calculate total from DB prices to prevent tampering
@@ -68,7 +75,7 @@ export async function POST(request: Request) {
       .from('orders')
       .insert({
         parent_id: user.id,
-        child_id,
+        child_id: finalChildId,
         mobile_number,
         delivery_address,
         delivery_city,
@@ -106,7 +113,7 @@ export async function POST(request: Request) {
     } else {
       // Auto-assign products to the selected child
       const childProductsData = insertedOrderItems.map(item => ({
-        child_id: child_id,
+        child_id: finalChildId,
         order_item_id: item.id,
         active: true
       }));
@@ -148,7 +155,7 @@ export async function POST(request: Request) {
     await sendOrderNotifications({
       orderId: order.id,
       parentName: profile?.full_name || 'Parent',
-      childName: childData.name,
+      childName: finalChildName,
       mobileNumber: mobile_number,
       deliveryAddress: `${delivery_address}, ${delivery_city}, ${delivery_state} - ${delivery_pincode}`,
       booksOrdered: orderItemsToInsert,

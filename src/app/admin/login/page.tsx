@@ -3,7 +3,7 @@
 
 import { useState } from 'react';
 import { adminLogin } from '../actions';
-import { HoneyBeeLogo } from '@/components/ui/HoneyBeeLogo'; // Assuming a logo component exists, if not we'll use an icon
+
 import { Leaf } from 'lucide-react';
 
 export default function AdminLoginPage() {
