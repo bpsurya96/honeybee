@@ -93,7 +93,7 @@ export async function getProductData(id: string) {
 
 export async function getAllActivities() {
   const supabase = await createAdminClient();
-  const { data } = await supabase.from('activities').select('id, name, product_id').order('name');
+  const { data } = await supabase.from('activities').select('id, name, product_id, activity_skills(skill_id)').order('name');
   return data || [];
 }
 

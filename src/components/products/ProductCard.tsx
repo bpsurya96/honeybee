@@ -14,7 +14,9 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const imageUrl = product.image_url || 'https://placehold.co/400x400/f8fafc/94a3b8?text=Product'
+    const fallback = 'https://placehold.co/400x400/f8fafc/94a3b8?text=Product';
+  // If thumbnail_url exists, use it. Otherwise, if image_url exists, split by comma and take the first one.
+  const imageUrl = (product as any).thumbnail_url || (product.image_url ? product.image_url.split(',')[0] : fallback);
   const { addToCart } = useCart();
   
   return (

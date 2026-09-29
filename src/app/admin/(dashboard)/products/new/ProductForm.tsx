@@ -16,25 +16,11 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
   const [selectedActivities, setSelectedActivities] = useState<string[]>([]);
   const [selectedSkills, setSelectedSkills] = useState<string[]>([]);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [thumbnailUrl, setThumbnailUrl] = useState<string>('');
+  const [uploadingThumbnail, setUploadingThumbnail] = useState(false);
   const [uploadingImage, setUploadingImage] = useState(false);
 
-  const [newSkillName, setNewSkillName] = useState('');
-  const [addingSkill, setAddingSkill] = useState(false);
-
-  const handleAddSkill = async () => {
-    if (!newSkillName.trim()) return;
-    setAddingSkill(true);
-    const { createQuickSkill } = await import('../../../productActions');
-    const res = await createQuickSkill(newSkillName);
-    if (res.success) {
-      setAllSkills(prev => [...prev, res.skill]);
-      setSelectedSkills(prev => [...prev, res.skill.id]);
-      setNewSkillName('');
-    } else {
-      alert(res.error);
-    }
-    setAddingSkill(false);
-  };
+  
 
 
   useEffect(() => {
@@ -46,10 +32,29 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
     if (initialData?.activities) {
       setSelectedActivities(initialData.activities.map((a: any) => a.id));
     }
+    if (initialData?.thumbnail_url) setThumbnailUrl(initialData.thumbnail_url);
     if (initialData?.image_url) {
       setImageUrls(initialData.image_url.split(',').filter((u: string) => u.trim() !== ''));
     }
   }, [initialData]);
+
+    const handleThumbnailUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    setUploadingThumbnail(true);
+    const formData = new FormData();
+    formData.append('files', e.target.files[0]);
+    try {
+      const res = await fetch('/api/upload', { method: 'POST', body: formData });
+      const data = await res.json();
+      if (data.urls && data.urls.length > 0) setThumbnailUrl(data.urls[0]);
+      else alert(data.error || 'Upload failed');
+    } catch (err) {
+      console.error(err);
+      alert('Upload failed');
+    }
+    setUploadingThumbnail(false);
+    e.target.value = '';
+  };
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files || e.target.files.length === 0) return;
@@ -87,6 +92,7 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
     formData.append('skills', JSON.stringify(selectedSkills));
     formData.append('activities', JSON.stringify(selectedActivities));
     formData.append('image_url', imageUrls.join(','));
+    formData.append('thumbnail_url', thumbnailUrl);
     if (initialData?.id) formData.append('id', initialData.id);
 
     const res = await saveProduct(formData);
@@ -182,25 +188,7 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
                ))}
              </div>
 
-             {/* Quick Add Skill UI */}
-             <div className="mt-4 pt-4 border-t border-gray-100 flex items-center gap-2">
-               <input 
-                 type="text" 
-                 placeholder="Type a new skill name..." 
-                 value={newSkillName}
-                 onChange={(e) => setNewSkillName(e.target.value)}
-                 onKeyDown={(e) => { if (e.key === 'Enter') { e.preventDefault(); handleAddSkill(); } }}
-                 className="flex-1 px-4 py-2 border border-gray-300 rounded-xl focus:ring-amber-500 focus:border-amber-500 text-sm"
-               />
-               <button 
-                 type="button" 
-                 onClick={handleAddSkill}
-                 disabled={addingSkill || !newSkillName.trim()}
-                 className="px-4 py-2 bg-stone-100 hover:bg-stone-200 text-stone-700 font-medium rounded-xl transition-colors disabled:opacity-50 text-sm whitespace-nowrap"
-               >
-                 {addingSkill ? 'Adding...' : 'Add Skill'}
-               </button>
-             </div>
+             
 
           </div>
         </div>
@@ -251,8 +239,33 @@ export default function ProductForm({ initialData }: { initialData?: any }) {
                {allActivities.map(act => (
                  <label key={act.id} className={`flex items-center p-3 border rounded-xl cursor-pointer transition-colors ${selectedActivities.includes(act.id) ? 'border-amber-500 bg-amber-50' : 'border-gray-200 hover:bg-gray-50'}`}>
                    <input type="checkbox" className="sr-only" checked={selectedActivities.includes(act.id)} onChange={(e) => {
-                     if (e.target.checked) setSelectedActivities([...selectedActivities, act.id]);
-                     else setSelectedActivities(selectedActivities.filter(id => id !== act.id));
+                     const isChecked = e.target.checked;
+                     let newActs: string[] = [];
+                     if (isChecked) {
+                       newActs = [...selectedActivities, act.id];
+                     } else {
+                       newActs = selectedActivities.filter(id => id !== act.id);
+                     }
+                     setSelectedActivities(newActs);
+
+                     setSelectedSkills(prev => {
+                       const next = new Set(prev);
+                       if (isChecked) {
+                         act.activity_skills?.forEach((as: any) => next.add(as.skill_id));
+                       } else {
+                         const otherSelected = allActivities.filter(a => newActs.includes(a.id));
+                         const remainingSkills = new Set<string>();
+                         otherSelected.forEach(a => {
+                           a.activity_skills?.forEach((as: any) => remainingSkills.add(as.skill_id));
+                         });
+                         act.activity_skills?.forEach((as: any) => {
+                           if (!remainingSkills.has(as.skill_id)) {
+                             next.delete(as.skill_id);
+                           }
+                         });
+                       }
+                       return Array.from(next);
+                     });
                    }} />
                    <div className={`flex-shrink-0 w-5 h-5 mr-3 border rounded flex items-center justify-center ${selectedActivities.includes(act.id) ? 'bg-amber-500 border-amber-500' : 'border-gray-300 bg-white'}`}>
                       {selectedActivities.includes(act.id) && <CheckCircle className="w-4 h-4 text-white" />}
