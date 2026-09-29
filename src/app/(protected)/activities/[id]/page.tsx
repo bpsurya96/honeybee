@@ -8,7 +8,7 @@ import Link from 'next/link'
 import { ChevronLeft, Play, Clock, CheckCircle2 } from 'lucide-react'
 import SkillBadge from '@/components/products/SkillBadge'
 import type { Skill } from '@/types'
-import ActivityCompletionButton from './ActivityCompletionButton'
+
 
 interface PageProps {
   params: Promise<{ id: string }>
@@ -72,7 +72,7 @@ export default async function ActivityDetailPage({ params }: PageProps) {
             </div>
           ) : (
             <img 
-              src={ 'https://placehold.co/1200x675/fef3c7/d97706?text=Activity'} 
+              src={ activity.image_url ? activity.image_url.split(',')[0] : 'https://placehold.co/1200x675/fef3c7/d97706?text=Activity'} 
               alt={activity.name}
               className="w-full h-full object-cover"
             />
@@ -81,10 +81,7 @@ export default async function ActivityDetailPage({ params }: PageProps) {
 
         <div className="p-6 md:p-8">
           <div className="flex flex-wrap items-center gap-4 mb-4">
-            <span className="inline-flex items-center gap-1.5 bg-amber-50 text-amber-700 px-3 py-1.5 rounded-full text-sm font-bold border border-amber-200">
-              <Clock size={16} />
-              {activity.duration_mins} minutes
-            </span>
+            
             <span className="text-stone-400 text-sm font-semibold uppercase tracking-wider">
               {'Activity'}
             </span>
@@ -98,6 +95,13 @@ export default async function ActivityDetailPage({ params }: PageProps) {
             {activity.description}
           </p>
 
+          {activity.instructions && (
+            <div className="prose text-stone-700 max-w-none mb-8">
+              <h3 className="font-bold text-stone-900 mb-2">Instructions</h3>
+              <div className="whitespace-pre-line">{activity.instructions}</div>
+            </div>
+          )}
+
           {activity.skills.length > 0 && (
             <div className="mb-8">
               <h3 className="font-semibold text-stone-900 mb-3 text-sm uppercase tracking-wider">Skills Developed</h3>
@@ -109,15 +113,7 @@ export default async function ActivityDetailPage({ params }: PageProps) {
             </div>
           )}
 
-          <div className="border-t border-stone-100 pt-8 mt-4 text-center">
-            <ActivityCompletionButton 
-              activityId={activity.id}
-              durationMins={activity.duration_mins}
-              childrenList={childrenData || []}
-              completedBy={completedBy}
-            />
           </div>
-        </div>
       </div>
     </div>
   )
