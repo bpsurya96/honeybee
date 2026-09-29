@@ -47,13 +47,18 @@ export default async function ChildDetailPage({ params }: PageProps) {
     .select(`
       id,
       order_item:order_items(
+        order:orders(payment_status),
         product:products(*)
       )
     `)
     .eq('child_id', id)
     .eq('active', true)
 
-  const library = (assignedProductsData || [])
+  const paidAssignedProducts = (assignedProductsData || []).filter((cp: any) => 
+    cp.order_item?.order?.payment_status === 'paid'
+  );
+
+  const library = paidAssignedProducts
     .map((cp: any) => cp.order_item?.product)
     .filter(Boolean)
 
@@ -68,10 +73,11 @@ export default async function ChildDetailPage({ params }: PageProps) {
   //   (child_activities where completed=true AND activity is in eligible set)
 
   // 1. Fetch all available activities from assigned products with skill->category mapping
-  const { data: availableData } = await supabase
+  const { data: availableDataRaw } = await supabase
     .from('child_products')
     .select(`
       order_items (
+        orders (payment_status),
         products (
           id,
           activities (
@@ -85,6 +91,10 @@ export default async function ChildDetailPage({ params }: PageProps) {
     `)
     .eq('child_id', id)
     .eq('active', true)
+
+  const availableData = (availableDataRaw || []).filter((cp: any) => 
+    cp.order_items?.orders?.payment_status === 'paid'
+  );
 
   // Build: categoryEligibleActivityIds[catId] = Set<activityId>
   // Using a Set means each activity is counted ONCE per category even if

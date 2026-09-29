@@ -120,18 +120,9 @@ export default async function ProductDetailPage({ params }: PageProps) {
     .map(cat => ({ category: cat, count: categoryActivityCount[cat.id] || 0 }))
 
   // Multiple images detection
-  let productImages = [product.image_url || 'https://placehold.co/800x800/fef3c7/d97706?text=Product']
-  if (product.image_url) {
-    try {
-      const folderPath = product.image_url.substring(0, product.image_url.lastIndexOf('/'))
-      const fullPath = path.join(process.cwd(), 'public', folderPath)
-      if (fs.existsSync(fullPath)) {
-        const files = fs.readdirSync(fullPath)
-        const imgs = files.filter(f => /\.(png|jpg|webp)$/i.test(f)).sort()
-        if (imgs.length > 0) productImages = imgs.map(f => `${folderPath}/${f}`)
-      }
-    } catch { /* silently fall back to single image */ }
-  }
+  let productImages = product.image_url
+    ? product.image_url.split(',').filter(Boolean)
+    : ['https://placehold.co/800x800/fef3c7/d97706?text=Product'];
 
   const ageDisplay = formatAgeRange(product.age_min_months, product.age_max_months)
   const hasSkillProgress = skillProgress.length > 0
