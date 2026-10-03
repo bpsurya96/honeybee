@@ -97,14 +97,14 @@ export default function CheckoutClient() {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      <h1 className="text-3xl font-display font-black text-stone-900 mb-8">Checkout ðŸ“¦</h1>
+      <h1 className="text-3xl font-display font-black text-stone-900 mb-8">Checkout </h1>
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2">
           <form onSubmit={handleSubmit} className="space-y-6">
             
             <div className="bg-white rounded-3xl p-6 border border-stone-100 shadow-sm">
-              <div className="flex justify-between items-center mb-4"><h2 className="text-xl font-bold text-[var(--color-fun-purple)]">ðŸ‘¦ Who is this book for?</h2><button type="button" onClick={() => router.push('/children/new')} className="text-[var(--color-fun-red)] text-sm font-bold hover:underline bg-red-50 px-3 py-1 rounded-full">+ Add New Child</button></div>
+              <div className="flex justify-between items-center mb-4"><h2 className="text-xl font-bold text-[var(--color-fun-purple)]"> Who is this book for?</h2><button type="button" onClick={() => router.push('/children/new')} className="text-[var(--color-fun-red)] text-sm font-bold hover:underline bg-red-50 px-3 py-1 rounded-full">+ Add New Child</button></div>
               {false ? (
                 <div className="text-stone-500 mb-4 text-sm">
                   No child profile found. Please add a child before placing an order.
@@ -118,18 +118,18 @@ export default function CheckoutClient() {
                     className="w-full px-4 py-3 bg-stone-50 border border-stone-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-fun-yellow)]"
                     required
                   >
-                    <option value="" disabled>Select Child â–¼</option>
+                    <option value="" disabled>Select Child </option>
                     {children.map(child => (
                       <option key={child.id} value={child.id}>{child.name}</option>
                     ))}
-                    <option value="gift">ðŸŽ Other / Gift</option>
+                    <option value="gift"> Other / Gift</option>
                   </select>
                 </div>
               )}
             </div>
 
             <div className="bg-white rounded-3xl p-6 border border-stone-100 shadow-sm">
-              <h2 className="text-xl font-bold text-[var(--color-fun-purple)] mb-4">ðŸ“ž Contact Details</h2>
+              <h2 className="text-xl font-bold text-[var(--color-fun-purple)] mb-4"> Contact Details</h2>
               <div>
                 <label className="block text-sm font-semibold text-stone-700 mb-1">Mobile Number</label>
                 <div className="flex gap-2">
@@ -150,7 +150,7 @@ export default function CheckoutClient() {
             </div>
 
             <div className="bg-white rounded-3xl p-6 border border-stone-100 shadow-sm">
-              <h2 className="text-xl font-bold text-[var(--color-fun-purple)] mb-4">ðŸ  Delivery Details</h2>
+              <h2 className="text-xl font-bold text-[var(--color-fun-purple)] mb-4"> Delivery Details</h2>
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-semibold text-stone-700 mb-1">Address</label>
@@ -210,7 +210,7 @@ export default function CheckoutClient() {
               disabled={loading || children.length === 0}
               className="w-full py-4 bg-[var(--color-fun-red)] hover:bg-[var(--color-fun-red-hover)] text-white btn-pill font-bold text-lg transition-colors shadow-sm disabled:opacity-50"
             >
-              {loading ? 'Processing... â³' : 'Place Order ðŸš€'}
+              {loading ? 'Processing... ' : 'Place Order '}
             </button>
           </form>
         </div>
@@ -225,7 +225,7 @@ export default function CheckoutClient() {
                     <span className="font-semibold text-[var(--color-fun-purple)]">{item.quantity}x</span> {item.product.name}
                   </div>
                   <div className="font-medium text-[var(--color-fun-red)] shrink-0">
-                    â‚¹{(item.product.price * item.quantity).toFixed(2)}
+                    {(item.product.price * item.quantity).toFixed(2)}
                   </div>
                 </div>
               ))}
@@ -233,24 +233,24 @@ export default function CheckoutClient() {
             <div className="border-t border-stone-100 pt-4 space-y-2">
               <div className="flex justify-between text-sm text-stone-600">
                 <span>Subtotal</span>
-                <span>â‚¹{totalPrice.toFixed(2)}</span>
+                <span>{totalPrice.toFixed(2)}</span>
               </div>
               <div className="flex justify-between text-lg font-black text-stone-900 pt-2 border-t border-stone-100">
                 <span>Total</span>
-                <span>â‚¹{totalPrice.toFixed(2)}</span>
+                <span>{totalPrice.toFixed(2)}</span>
               </div>
             </div>
             
             {/* Trust Badges */}
             <div className="mt-8 space-y-3 bg-stone-50 p-4 rounded-2xl">
               <div className="flex items-center gap-2 text-sm text-stone-600 font-medium">
-                <span>ðŸšš</span> Same Day Dispatch
+                <span></span> Same Day Dispatch
               </div>
               <div className="flex items-center gap-2 text-sm text-stone-600 font-medium">
-                <span>ðŸ”’</span> Safe & Secure Payments
+                <span></span> Safe & Secure Payments
               </div>
               <div className="flex items-center gap-2 text-sm text-stone-600 font-medium">
-                <span>â­</span> Best Quality Assured
+                <span></span> Best Quality Assured
               </div>
             </div>
           </div>
