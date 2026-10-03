@@ -34,7 +34,7 @@ export async function POST(req: Request) {
       const { data: creditAccount } = await adminSupabase
         .from('ai_credit_accounts')
         .select('balance')
-        .eq('parent_id', user.id)
+        .eq('id', user.id)
         .single();
         
       if (!creditAccount || creditAccount.balance < 1) {
@@ -72,7 +72,7 @@ export async function POST(req: Request) {
     let childrenQuery = supabase
       .from('children')
       .select('id, name, date_of_birth')
-      .eq('parent_id', user.id)
+      .eq('id', user.id)
 
     if (childId) {
       childrenQuery = childrenQuery.eq('id', childId)
