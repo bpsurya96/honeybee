@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
+﻿/* eslint-disable @next/next/no-img-element */
 'use client'
 
 import Link from 'next/link'
@@ -15,7 +15,6 @@ interface AppHeaderProps {
 
 const navLinks = [
   { href: '/dashboard', label: 'Home 🏠' },
-  { href: '/children', label: 'Children 👦' },
   { href: '/products', label: 'Products 📚' },
   { href: '/orders', label: 'Orders 📦' },
   { href: '/coach', label: 'Coach 🧠' },
@@ -117,13 +116,31 @@ export default function AppHeader({ user }: AppHeaderProps) {
                   <p className="font-semibold text-stone-900 text-sm truncate">{parentName}</p>
                   <p className="text-stone-400 text-xs">Parent Account</p>
                 </div>
+
+                {/* Mobile-only Navigation Links */}
+                <div className="md:hidden border-b border-stone-100 pb-2 mb-2">
+                  {navLinks.map((link) => (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={() => setDropdownOpen(false)}
+                      className={`flex items-center gap-3 px-3 py-2 btn-pill transition-colors w-full text-left ${
+                        pathname.startsWith(link.href) ? 'bg-[var(--color-fun-yellow)] text-stone-900 font-bold' : 'hover:bg-stone-50 text-stone-700 font-medium'
+                      }`}
+                    >
+                      <span className="text-sm">{link.label}</span>
+                    </Link>
+                  ))}
+                </div>
+
                 <Link
                   href="/profile"
                   onClick={() => setDropdownOpen(false)}
-                  className="flex items-center gap-3 px-3 py-2 btn-pill hover:bg-[var(--color-fun-yellow)] transition-colors w-full text-left"
+                  className="flex items-center gap-3 px-3 py-2 btn-pill hover:bg-[var(--color-fun-yellow)] transition-colors w-full text-left hidden md:flex"
                 >
                   <span className="text-sm font-medium text-stone-700">My Profile</span>
                 </Link>
+
                 <div className="border-t border-stone-100 mt-2 pt-2">
                   <form action="/api/auth/signout" method="POST">
                     <button

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
 
 import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
@@ -23,8 +23,10 @@ export default async function OrderDetailPage({ params }: PageProps) {
     .from('orders')
     .select(`
       *,
-      children (
-        name
+      order_children (
+        children (
+          name
+        )
       ),
       items:order_items(
         *,
@@ -59,15 +61,15 @@ export default async function OrderDetailPage({ params }: PageProps) {
           </div>
           <div className="flex flex-col gap-2 md:items-end">
             <span className={`text-sm font-bold px-3 py-1.5 rounded-full uppercase tracking-wider inline-block text-center ${
-              order.status === 'paid' ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-100 text-stone-500'
+              order.payment_status === 'paid' ? 'bg-emerald-100 text-emerald-700' : 'bg-stone-100 text-stone-500'
             }`}>
-              Payment: {order.status}
+              Payment: {order.payment_status || 'pending'}
             </span>
             <span className={`text-sm font-semibold ${
-              order.delivery_status === 'delivered' ? 'text-emerald-600' : 
-              order.delivery_status === 'shipped' ? 'text-amber-600' : 'text-stone-500'
+              order.status === 'delivered' ? 'text-emerald-600' : 
+              order.status === 'shipped' ? 'text-amber-600' : 'text-stone-500'
             }`}>
-              Delivery: {order.delivery_status.charAt(0).toUpperCase() + order.delivery_status.slice(1)}
+              Status: {(order.status || 'pending').charAt(0).toUpperCase() + (order.status || 'pending').slice(1)}
             </span>
           </div>
         </div>
@@ -75,7 +77,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
         <div className="p-6 md:p-8 bg-stone-50/50">
           <h2 className="font-display font-bold text-lg text-stone-900 mb-4">Learning Kits</h2>
           <p className="text-stone-600 text-sm mb-6">
-            These kits have been automatically added to <span className="font-bold">{order.children?.name || 'your child'}</span>'s library.
+            These kits have been automatically added to <span className="font-bold">{order.order_children?.[0]?.children?.name || 'your child'}</span>'s library.
           </p>
           
           <div className="space-y-4">
@@ -85,11 +87,11 @@ export default async function OrderDetailPage({ params }: PageProps) {
                   {item.product?.image_url ? (
                     <img src={item.product.image_url} alt={item.product.name} className="w-full h-full object-cover" />
                   ) : (
-                    <span className="text-3xl">📚</span>
+                    <span className="text-3xl">📦</span>
                   )}
                 </div>
                 <div>
-                  <h3 className="font-bold text-stone-900">{item.product?.name}</h3>
+                  <h3 className="font-bold text-stone-900">{item.product_name || item.product?.name}</h3>
                   <p className="text-stone-500 text-sm mb-2">{item.product?.description}</p>
                   <p className="font-semibold text-amber-600">Qty: {item.quantity}</p>
                 </div>
@@ -101,7 +103,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
         <div className="p-6 md:p-8 border-t border-stone-100">
           <div className="flex justify-between items-center text-lg mb-2">
             <span className="text-stone-600">Subtotal</span>
-            <span className="font-semibold text-stone-900">₹{order.subtotal.toFixed(2)}</span>
+            <span className="font-semibold text-stone-900">₹{Number(order.subtotal || 0).toFixed(2)}</span>
           </div>
           <div className="flex justify-between items-center text-lg mb-4">
             <span className="text-stone-600">Shipping</span>
@@ -109,7 +111,7 @@ export default async function OrderDetailPage({ params }: PageProps) {
           </div>
           <div className="flex justify-between items-center text-2xl border-t border-stone-200 pt-4">
             <span className="font-display font-bold text-stone-900">Total</span>
-            <span className="font-display font-black text-amber-600">₹{order.total.toFixed(2)}</span>
+            <span className="font-display font-black text-amber-600">₹{Number(order.total || 0).toFixed(2)}</span>
           </div>
         </div>
       </div>

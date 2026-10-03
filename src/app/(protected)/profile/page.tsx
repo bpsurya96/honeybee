@@ -1,4 +1,4 @@
-import type { Metadata } from 'next'
+﻿import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import ProfileClient from './ProfileClient'
 
@@ -12,7 +12,7 @@ export default async function ProfilePage() {
 
   const { data: profile } = await supabase
     .from('profiles')
-    .select('*')
+    .select('*, ai_credit_accounts(balance)')
     .eq('id', user!.id)
     .single()
 
