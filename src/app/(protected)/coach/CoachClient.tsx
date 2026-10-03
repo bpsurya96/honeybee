@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
+﻿/* eslint-disable @typescript-eslint/no-explicit-any */
 
 'use client'
 
@@ -13,11 +13,15 @@ interface CoachClientProps {
 export default function CoachClient({ childrenList }: CoachClientProps) {
   const [selectedChildId, setSelectedChildId] = useState<string>('')
   
+  // We need a stable conversation ID for this session to group logs
+  const [conversationId] = useState<string>(`conv-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`)
+  
   const { messages, input, handleInputChange, handleSubmit, isLoading, error } = useChat({
     api: '/api/chat',
     streamProtocol: 'text',
     body: {
-      childId: selectedChildId || undefined
+      childId: selectedChildId || undefined,
+      conversationId: conversationId
     },
     onError: (e) => {
       console.error(e)
@@ -29,6 +33,9 @@ export default function CoachClient({ childrenList }: CoachClientProps) {
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages])
+
+  // Custom error parsing
+  const isInsufficientCredits = error?.message?.includes('402') || error?.message?.includes('Insufficient AI Credits');
 
   return (
     <div className="flex flex-col h-full relative bg-stone-50/30">
@@ -55,7 +62,9 @@ export default function CoachClient({ childrenList }: CoachClientProps) {
       {error && (
         <div className="bg-red-50 text-red-600 p-4 flex items-center gap-2 border-b border-red-100 text-sm font-medium">
           <AlertCircle size={16} />
-          {error.message || 'An error occurred while connecting to the AI Coach.'}
+          {isInsufficientCredits 
+            ? 'You have run out of AI Credits. Please purchase a new developmental kit to earn more credits!'
+            : (error.message || 'An error occurred while connecting to the AI Coach.')}
         </div>
       )}
 
@@ -66,9 +75,13 @@ export default function CoachClient({ childrenList }: CoachClientProps) {
             <div className="w-20 h-20 bg-amber-100 text-amber-500 rounded-full flex items-center justify-center mb-6 shadow-sm border border-amber-200">
               <Bot size={40} />
             </div>
-            <h2 className="text-2xl font-display font-bold text-stone-900 mb-3">Hi, I&apos;m HoneyBee Coach!</h2>
+            <h2 className="text-2xl font-display font-bold text-stone-900 mb-3">Hi, I'm HoneyBee Coach!</h2>
             <p className="text-stone-500 text-lg leading-relaxed mb-8">
-              I can help you interpret your child&apos;s learning progress, suggest offline activities, or answer any parenting questions.
+              I can help you interpret your child's learning progress, suggest offline activities, or answer any parenting questions.
+              <br/><br/>
+              <span className="text-sm font-medium text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
+                ⚡ Costs 1 AI Credit per message
+              </span>
             </p>
             <div className="flex flex-wrap gap-2 justify-center">
               {['What games build motor skills?', 'How to handle tantrums?', 'Explain cognitive development'].map(suggestion => (
@@ -129,13 +142,13 @@ export default function CoachClient({ childrenList }: CoachClientProps) {
           <input
             value={input}
             onChange={handleInputChange}
-            placeholder="Ask your AI Coach anything..."
+            placeholder="Ask your AI Coach anything... (Costs 1 credit)"
             className="flex-1 bg-stone-50 border border-stone-200 text-stone-900 rounded-full px-6 py-4 focus:ring-2 focus:ring-amber-400 focus:border-amber-400 outline-none font-medium shadow-inner"
-            disabled={isLoading}
+            disabled={isLoading || isInsufficientCredits}
           />
           <button
             type="submit"
-            disabled={isLoading || !input.trim()}
+            disabled={isLoading || !input.trim() || isInsufficientCredits}
             className="bg-amber-500 hover:bg-amber-600 disabled:bg-stone-200 disabled:text-stone-400 text-white rounded-full w-14 h-14 flex items-center justify-center transition-all shadow-md shrink-0"
           >
             <Send size={20} className={input.trim() ? "translate-x-0.5" : ""} />

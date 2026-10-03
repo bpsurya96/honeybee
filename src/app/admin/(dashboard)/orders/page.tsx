@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
+﻿/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 
 'use client';
 
@@ -36,7 +36,7 @@ export default function OrdersPage() {
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Customer</th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Items</th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Payment</th>
-                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Delivery</th>
+                  <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Status</th>
                   <th className="px-6 py-4 text-left text-xs font-bold text-gray-500 uppercase">Total</th>
                   <th className="px-6 py-4 text-right text-xs font-bold text-gray-500 uppercase">Actions</th>
                 </tr>
@@ -50,7 +50,7 @@ export default function OrdersPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="font-medium text-gray-900">{o.profiles?.full_name || 'Unknown'}</div>
-                      <div className="text-xs text-gray-500">Child: {o.children?.name || 'N/A'}</div>
+                      <div className="text-xs text-gray-500">Child: {o.order_children?.[0]?.children?.name || 'N/A'}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                       {o.items?.length || 0} items
@@ -61,12 +61,12 @@ export default function OrdersPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                       <span className={`px-2.5 py-1 rounded-full text-xs font-medium capitalize ${o.delivery_status === 'delivered' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
-                        {o.delivery_status}
+                       <span className={`px-2.5 py-1 rounded-full text-xs font-medium capitalize ${o.status === 'delivered' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'}`}>
+                        {o.status}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">
-                      $${Number(o.total).toFixed(2)}
+                      &#8377;{Number(o.total).toFixed(2)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                       <Link href={`/admin/orders/${o.id}`} className="text-amber-600 hover:text-amber-900 font-bold bg-amber-50 px-3 py-1.5 rounded-full border border-amber-100">Edit</Link>
@@ -74,7 +74,7 @@ export default function OrdersPage() {
                   </tr>
                 ))}
                 {orders.length === 0 && (
-                  <tr><td colSpan={6} className="px-6 py-12 text-center text-gray-500">No orders found.</td></tr>
+                  <tr><td colSpan={7} className="px-6 py-12 text-center text-gray-500">No orders found.</td></tr>
                 )}
               </tbody>
             </table>

@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, react-hooks/exhaustive-deps */
+﻿/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars, react-hooks/exhaustive-deps */
 
 'use server'
 
@@ -43,8 +43,8 @@ export async function saveProduct(formData: FormData) {
 
   // Update skills
   if (productId) {
-    // Clear old activities linked to this product
-    await supabase.from('activities').update({ product_id: null }).eq('product_id', productId)
+    // Fix P1 Data Bug: We do not set product_id to null because it's NOT NULL constrained.
+    // Unassigned activities stay with their current product unless explicitly moved.
     if (activities.length > 0) {
       await supabase.from('activities').update({ product_id: productId }).in('id', activities)
     }

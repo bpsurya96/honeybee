@@ -1,6 +1,5 @@
-import { NextResponse } from 'next/server';
-import { createClient } from '@/lib/supabase/server';
-import { NEW_BOOK_AI_CREDIT } from '@/lib/config';
+﻿import { NextResponse } from 'next/server';
+import { createClient, createAdminClient } from '@/lib/supabase/server';
 import { sendOrderNotifications } from '@/lib/notifications';
 
 export async function POST(request: Request) {
@@ -13,38 +12,45 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    const { child_id, mobile_number, delivery_address, delivery_city, delivery_state, delivery_pincode, items } = body;
+    const {
+      child_ids,
+      shipping_name,
+      shipping_phone,
+      shipping_line1,
+      shipping_city,
+      shipping_state,
+      shipping_pincode,
+      items
+    } = body;
 
-    if (!child_id || !items || items.length === 0) {
+    if (!items || items.length === 0) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    // Verify child belongs to parent
-    let finalChildId = child_id;
-    let finalChildName = 'Gift';
-    if (child_id === 'gift') {
-      finalChildId = null;
-    } else {
-      const { data: childData, error: childError } = await supabase
-      .from('children')
-      .select('id, name')
-      .eq('id', child_id)
-      .eq('parent_id', user.id)
-      .single();
-
-    if (childError || !childData) {
-      return NextResponse.json({ error: 'Invalid child selected' }, { status: 400 });
-    }
-      finalChildName = childData.name;
+    // Verify children belong to parent
+    const validChildIds = [];
+    if (child_ids && Array.isArray(child_ids)) {
+      for (const cid of child_ids) {
+        if (cid === 'gift') continue;
+        const { data: childData } = await supabase
+          .from('children')
+          .select('id')
+          .eq('id', cid)
+          .eq('parent_id', user.id)
+          .single();
+        if (childData) validChildIds.push(childData.id);
+      }
     }
 
     // Calculate total from DB prices to prevent tampering
     let subtotal = 0;
-    const orderItemsToInsert = [];
-    let hasNewBook = false;
+    const validatedItems = [];
+
+    // Use admin client to read active products bypassing user RLS constraints if any
+    const adminSupabase = await createAdminClient();
 
     for (const item of items) {
-      const { data: productData, error: productError } = await supabase
+      const { data: productData, error: productError } = await adminSupabase
         .from('products')
         .select('id, price, name')
         .eq('id', item.product_id)
@@ -57,91 +63,38 @@ export async function POST(request: Request) {
       const itemTotal = productData.price * item.quantity;
       subtotal += itemTotal;
       
-      orderItemsToInsert.push({
+      validatedItems.push({
         product_id: productData.id,
+        product_name: productData.name,
         quantity: item.quantity,
-        unit_price: productData.price,
-        name: productData.name // for notifications
+        unit_price: productData.price
       });
-
-      // Assuming any purchase of products table is a new book
-      hasNewBook = true;
     }
 
     const total = subtotal; // add shipping logic if any
+    
+    // Generate idempotency key for safe retries
+    const idempotencyKey = `chk-${user.id}-${Date.now()}`;
 
-    // Create Order
-    const { data: order, error: orderError } = await supabase
-      .from('orders')
-      .insert({
-        parent_id: user.id,
-        child_id: finalChildId,
-        mobile_number,
-        delivery_address,
-        delivery_city,
-        delivery_state,
-        delivery_pincode,
-        subtotal,
-        total,
-        status: 'new',
-        payment_status: 'pending',
-        delivery_status: 'pending'
-      })
-      .select()
-      .single();
+    // Execute atomic order transaction
+    const { data: orderId, error: txError } = await adminSupabase.rpc('create_order_transaction', {
+      p_parent_id: user.id,
+      p_idempotency_key: idempotencyKey,
+      p_shipping_name: shipping_name || 'N/A',
+      p_shipping_phone: shipping_phone || 'N/A',
+      p_shipping_line1: shipping_line1 || 'N/A',
+      p_shipping_city: shipping_city || 'N/A',
+      p_shipping_state: shipping_state || 'N/A',
+      p_shipping_pincode: shipping_pincode || 'N/A',
+      p_subtotal: subtotal,
+      p_total: total,
+      p_items: validatedItems,
+      p_child_ids: validChildIds
+    });
 
-    if (orderError) {
-      console.error('Order creation failed:', orderError);
+    if (txError) {
+      console.error('Order creation failed:', txError);
       return NextResponse.json({ error: 'Failed to create order' }, { status: 500 });
-    }
-
-    // Create Order Items
-    const orderItemsData = orderItemsToInsert.map(item => ({
-      order_id: order.id,
-      product_id: item.product_id,
-      quantity: item.quantity,
-      unit_price: item.unit_price
-    }));
-
-    const { data: insertedOrderItems, error: itemsError } = await supabase
-      .from('order_items')
-      .insert(orderItemsData)
-      .select();
-
-    if (itemsError || !insertedOrderItems) {
-      console.error('Order items creation failed:', itemsError);
-    } else {
-      // Auto-assign products to the selected child
-      const childProductsData = insertedOrderItems.map(item => ({
-        child_id: finalChildId,
-        order_item_id: item.id,
-        active: true
-      }));
-
-      const { error: cpError } = await supabase
-        .from('child_products')
-        .insert(childProductsData);
-        
-      if (cpError) {
-        console.error('Failed to auto-assign to child:', cpError);
-      }
-    }
-
-    // Add AI Credit if applicable
-    if (hasNewBook) {
-      const { error: creditError } = await supabase
-        .from('ai_credit_transactions')
-        .insert({
-          parent_id: user.id,
-          order_id: order.id,
-          amount: NEW_BOOK_AI_CREDIT,
-          reason: 'New Book Purchase',
-          status: 'completed'
-        });
-      
-      if (creditError) {
-        console.error('Failed to award AI credit:', creditError);
-      }
     }
 
     // Fetch parent info for notifications
@@ -153,17 +106,17 @@ export async function POST(request: Request) {
 
     // Trigger Notifications
     await sendOrderNotifications({
-      orderId: order.id,
+      orderId: orderId,
       parentName: profile?.full_name || 'Parent',
-      childName: finalChildName,
-      mobileNumber: mobile_number,
-      deliveryAddress: `${delivery_address}, ${delivery_city}, ${delivery_state} - ${delivery_pincode}`,
-      booksOrdered: orderItemsToInsert,
+      childName: validChildIds.length > 0 ? 'Assigned Children' : 'Gift',
+      mobileNumber: shipping_phone,
+      deliveryAddress: `${shipping_line1}, ${shipping_city}, ${shipping_state} - ${shipping_pincode}`,
+      booksOrdered: validatedItems.map((item: any) => ({ name: item.product_name, quantity: item.quantity })),
       totalAmount: total,
-      paymentStatus: order.payment_status
+      paymentStatus: 'pending'
     });
 
-    return NextResponse.json({ data: order });
+    return NextResponse.json({ data: { id: orderId } });
 
   } catch (err: any) {
     console.error('Checkout error:', err);

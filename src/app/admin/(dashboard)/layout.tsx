@@ -1,19 +1,29 @@
-
-import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
+﻿import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { adminLogout } from '../actions';
 import { LayoutDashboard, Users, Package, Activity, LogOut, Leaf, ShoppingCart, Settings } from 'lucide-react';
+import { createClient } from '@/lib/supabase/server';
 
 export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const cookieStore = await cookies();
-  const session = cookieStore.get('honeybee_admin_session');
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
 
-  if (!session || session.value !== 'authenticated') {
+  if (!user) {
+    redirect('/admin/login');
+  }
+
+  // Check role
+  const { data: profile } = await supabase
+    .from('profiles')
+    .select('role')
+    .eq('id', user.id)
+    .single();
+
+  if (profile?.role !== 'admin' && profile?.role !== 'super_admin') {
     redirect('/admin/login');
   }
 

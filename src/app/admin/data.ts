@@ -1,4 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
+﻿/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars */
 
 'use server'
 
@@ -14,14 +14,15 @@ export async function getAdminStats() {
   const { count: activitiesCount } = await supabase.from('activities').select('*', { count: 'exact', head: true })
   const { count: completedActivitiesCount } = await supabase.from('child_activities').select('*', { count: 'exact', head: true }).eq('completed', true)
 
-  const { data: orders } = await supabase.from('orders').select('total, status, delivery_status, payment_status, created_at')
+  const { data: orders } = await supabase.from('orders').select('total, status, payment_status, created_at')
   const totalRevenue = orders?.reduce((sum, order) => sum + Number(order.total), 0) || 0
-  const pendingOrders = orders?.filter(o => o.delivery_status === 'pending').length || 0
-  const completedOrders = orders?.filter(o => o.delivery_status === 'delivered').length || 0
+  const pendingOrders = orders?.filter(o => o.status === 'pending').length || 0
+  const completedOrders = orders?.filter(o => o.status === 'delivered').length || 0
   const pendingPayments = orders?.filter(o => o.payment_status === 'pending').length || 0
 
   const { data: creditTxs } = await supabase.from('ai_credit_transactions').select('amount')
-  const totalCreditsIssued = creditTxs?.reduce((sum, tx) => sum + Number(tx.amount), 0) || 0
+  // For issued we only count positive (awards)
+  const totalCreditsIssued = creditTxs?.reduce((sum, tx) => sum + (Number(tx.amount) > 0 ? Number(tx.amount) : 0), 0) || 0
   
   const { data: orderItems } = await supabase.from('order_items').select('quantity')
   const totalBooksSold = orderItems?.reduce((sum, item) => sum + Number(item.quantity), 0) || 0
@@ -41,16 +42,27 @@ export async function getAdminStats() {
     }
   }
 
-  const { data: topProductsData } = await supabase
-    .from('products')
-    .select('name, id')
-    .limit(5)
-    
-  const topProducts = topProductsData?.map(p => ({
-    name: p.name,
-    sales: totalBooksSold > 0 ? Math.floor(Math.random() * 10) + 1 : 0,
-    category: 'Developmental Kit'
-  })) || []
+  // Calculate real top products from order_items
+  const { data: allOrderItems } = await supabase.from('order_items').select('product_id, quantity, products(name)')
+  const productSales: Record<string, {name: string, sales: number}> = {}
+  if (allOrderItems) {
+    for (const item of allOrderItems) {
+      const pid = item.product_id
+      if (!productSales[pid]) {
+        productSales[pid] = { name: (item as any).products?.name || 'Unknown', sales: 0 }
+      }
+      productSales[pid].sales += Number(item.quantity)
+    }
+  }
+  
+  const topProducts = Object.values(productSales)
+    .sort((a, b) => b.sales - a.sales)
+    .slice(0, 5)
+    .map(p => ({
+      name: p.name,
+      sales: p.sales,
+      category: 'Developmental Kit'
+    }))
 
   return {
     totalRevenue: `$${totalRevenue.toFixed(2)}`,
@@ -75,9 +87,10 @@ export async function getCustomers() {
   const { data: authUsers } = await supabase.auth.admin.listUsers()
   
   const { data: profiles } = await supabase.from('profiles').select(`
-    id, full_name, avatar_url, ai_credits, created_at,
+    id, full_name, avatar_url, created_at,
+    ai_credit_accounts ( balance ),
     children ( id, name, date_of_birth, gender ),
-    orders ( id, total, delivery_status, created_at )
+    orders ( id, total, status, created_at )
   `)
 
   return profiles?.map(profile => {
@@ -89,7 +102,7 @@ export async function getCustomers() {
       name: profile.full_name || 'Unknown User',
       email: authUser?.email || 'No email',
       phone: authUser?.phone || 'No phone',
-      ai_credits: profile.ai_credits || 0,
+      ai_credits: profile.ai_credit_accounts?.[0]?.balance || 0,
       created_at: profile.created_at,
       total_spent: totalSpent,
       children: profile.children.map((c: any) => ({
@@ -102,7 +115,7 @@ export async function getCustomers() {
         id: o.id.split('-')[0],
         date: new Date(o.created_at).toISOString().split('T')[0],
         total: `$${Number(o.total).toFixed(2)}`,
-        status: o.delivery_status
+        status: o.status
       }))
     }
   }) || []
@@ -115,6 +128,7 @@ export async function getCustomerDetails(id: string) {
   
   const { data: profile } = await supabase.from('profiles').select(`
     *,
+    ai_credit_accounts ( balance ),
     children ( *, child_activities(*, activities(*)), child_products(*, order_items(product_id, products(*))) ),
     orders ( *, order_items(*, products(*)) ),
     ai_credit_transactions(*)
@@ -151,6 +165,6 @@ export async function getActivities() {
 
 export async function getOrders() {
   const supabase = await createAdminClient()
-  const { data } = await supabase.from('orders').select('*, children(name), profiles(full_name), items:order_items(*, product:products(*))').order('created_at', { ascending: false })
+  const { data } = await supabase.from('orders').select('*, order_children(child_id, children(*)), profiles(full_name), items:order_items(*, product:products(*))').order('created_at', { ascending: false })
   return data || []
 }
