@@ -1,4 +1,4 @@
-export interface OrderNotificationData {
+﻿export interface OrderNotificationData {
   orderId: string;
   parentName: string;
   childName: string;
@@ -28,7 +28,7 @@ Mobile Number: ${data.mobileNumber}
 Delivery Address: ${data.deliveryAddress}
 Books Ordered:
 ${data.booksOrdered.map(b => `- ${b.quantity}x ${b.name}`).join('\n')}
-Total Amount: ₹${data.totalAmount}
+Total Amount: Rs. ${data.totalAmount}
 Payment Status: ${data.paymentStatus}
 Order Date: ${new Date().toLocaleString()}
 =========================================
@@ -44,7 +44,7 @@ New Book Order
 Order: #${data.orderId.substring(0, 8)}
 Parent: ${data.parentName}
 Child: ${data.childName}
-Amount: ₹${data.totalAmount}
+Amount: Rs. ${data.totalAmount}
 Payment: ${data.paymentStatus}
 
 Mobile: ${data.mobileNumber}

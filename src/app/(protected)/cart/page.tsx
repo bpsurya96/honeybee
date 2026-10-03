@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import React from 'react';
 import { useCart } from '@/context/CartContext';
@@ -13,7 +13,7 @@ export default function CartPage() {
       <div className="max-w-4xl mx-auto px-4 py-12 text-center">
         <h1 className="text-3xl font-display font-black text-stone-900 mb-4">Your Cart</h1>
         <div className="bg-white rounded-3xl p-12 border border-stone-100 shadow-sm">
-          <div className="text-6xl mb-4">🛒</div>
+          <div className="text-6xl mb-4">ðŸ›’</div>
           <h2 className="text-xl font-semibold text-stone-900 mb-2">Your cart is empty</h2>
           <p className="text-stone-500 mb-6">Looks like you haven't added any learning kits yet.</p>
           <Link href="/products" className="inline-block px-6 py-3 bg-[var(--color-fun-red)] hover:bg-[var(--color-fun-red-hover)] text-white btn-pill font-semibold transition-colors">
@@ -42,7 +42,7 @@ export default function CartPage() {
               <div className="flex-1 min-w-0">
                 <h3 className="font-semibold text-stone-900 truncate">{item.product.name}</h3>
                 <p className="text-stone-500 text-sm truncate">{item.product.description}</p>
-                <div className="font-bold text-amber-600 mt-1">₹{item.product.price.toFixed(2)}</div>
+                <div className="font-bold text-amber-600 mt-1">Rs. {item.product.price.toFixed(2)}</div>
               </div>
               <div className="flex flex-col items-end gap-2 shrink-0">
                 <div className="flex items-center gap-2 bg-stone-50 rounded-lg p-1 border border-stone-200">
@@ -77,7 +77,7 @@ export default function CartPage() {
             <div className="space-y-3 mb-6 text-stone-600">
               <div className="flex justify-between">
                 <span>Subtotal ({totalItems} items)</span>
-                <span className="font-medium text-stone-900">₹{totalPrice.toFixed(2)}</span>
+                <span className="font-medium text-stone-900">Rs. {totalPrice.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Shipping</span>
@@ -85,7 +85,7 @@ export default function CartPage() {
               </div>
               <div className="border-t border-stone-100 pt-3 flex justify-between font-bold text-lg text-stone-900">
                 <span>Total</span>
-                <span>₹{totalPrice.toFixed(2)}</span>
+                <span>Rs. {totalPrice.toFixed(2)}</span>
               </div>
             </div>
             <Link 

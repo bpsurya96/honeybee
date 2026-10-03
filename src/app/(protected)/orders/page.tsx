@@ -66,7 +66,7 @@ export default async function OrdersPage() {
                   </span>
                 </div>
                 <p className="text-stone-600 text-sm font-medium">
-                  {order.items && order.items[0] ? order.items[0].count : 0} item(s) • Total: ₹{Number(order.total || 0).toFixed(2)}
+                  {order.items && order.items[0] ? order.items[0].count : 0} item(s) • Total: Rs. {Number(order.total || 0).toFixed(2)}
                 </p>
               </div>
               <div className="flex items-center justify-between md:justify-end gap-4 w-full md:w-auto border-t md:border-0 border-stone-100 pt-4 md:pt-0 mt-2 md:mt-0">

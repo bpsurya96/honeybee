@@ -1,4 +1,4 @@
-/* eslint-disable @next/next/no-img-element */
+﻿/* eslint-disable @next/next/no-img-element */
 'use client';
 
 import Link from 'next/link'
@@ -38,7 +38,7 @@ export default function ProductCard({ product }: ProductCardProps) {
             <h3 className="font-display font-bold text-lg text-stone-900 leading-tight">
               {product.name}
             </h3>
-            <span className="font-bold text-[var(--color-fun-red)]">₹{product.price.toFixed(2)}</span>
+            <span className="font-bold text-[var(--color-fun-red)]">Rs. {product.price.toFixed(2)}</span>
           </div>
           
           <p className="text-stone-500 text-sm line-clamp-2 mb-4 flex-1">
@@ -66,7 +66,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         }}
         className="mt-auto w-full py-2.5 bg-[#FFC837] text-stone-900 font-bold btn-pill"
       >
-        Add to Cart 🛒
+        Add to Cart ðŸ›’
       </button>
     </div>
   )

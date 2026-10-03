@@ -103,15 +103,15 @@ export default async function OrderDetailPage({ params }: PageProps) {
         <div className="p-6 md:p-8 border-t border-stone-100">
           <div className="flex justify-between items-center text-lg mb-2">
             <span className="text-stone-600">Subtotal</span>
-            <span className="font-semibold text-stone-900">₹{Number(order.subtotal || 0).toFixed(2)}</span>
+            <span className="font-semibold text-stone-900">Rs. {Number(order.subtotal || 0).toFixed(2)}</span>
           </div>
           <div className="flex justify-between items-center text-lg mb-4">
             <span className="text-stone-600">Shipping</span>
-            <span className="font-semibold text-stone-900">₹0.00</span>
+            <span className="font-semibold text-stone-900">Rs. 0.00</span>
           </div>
           <div className="flex justify-between items-center text-2xl border-t border-stone-200 pt-4">
             <span className="font-display font-bold text-stone-900">Total</span>
-            <span className="font-display font-black text-amber-600">₹{Number(order.total || 0).toFixed(2)}</span>
+            <span className="font-display font-black text-amber-600">Rs. {Number(order.total || 0).toFixed(2)}</span>
           </div>
         </div>
       </div>

@@ -146,7 +146,7 @@ export default function ProfileClient({ profile, email, createdAt }: ProfileClie
             </div>
           </div>
           <span className="text-[var(--color-fun-purple)] font-black text-xl bg-purple-50 px-4 py-2 btn-pill border border-purple-100">
-            â‚¹{((profile as any)?.ai_credit_accounts?.balance ?? 0).toFixed(2)}
+            Rs. {((profile as any)?.ai_credit_accounts?.balance ?? 0).toFixed(2)}
           </span>
         </div>
       </div>
