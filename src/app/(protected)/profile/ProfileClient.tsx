@@ -1,6 +1,7 @@
-﻿'use client'
-
-import { useState } from 'react'
+'use client'
+import { createClient } from '@/lib/supabase/client'
+﻿
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import AvatarUpload from '@/components/ui/AvatarUpload'
 import { ToastContainer } from '@/components/ui/Toast'
@@ -18,6 +19,39 @@ export default function ProfileClient({ profile, email, createdAt }: ProfileClie
   const { toasts, removeToast, success, error: showError } = useToast()
   const [fullName, setFullName] = useState(profile?.full_name || '')
   const [saving, setSaving] = useState(false)
+  
+  // Addresses state
+  const [addresses, setAddresses] = useState<any[]>([])
+  const [editingAddress, setEditingAddress] = useState(false)
+  const [addressForm, setAddressForm] = useState({ line1: '', city: '', state: '', pincode: '', phone: '', full_name: '' })
+
+  useEffect(() => {
+    fetchAddresses()
+  }, [])
+
+  async function fetchAddresses() {
+    const supabase = createClient()
+    const { data } = await supabase.from('addresses').select('*')
+    if (data) setAddresses(data)
+  }
+
+  async function saveAddress(e: React.FormEvent) {
+    const supabase = createClient()
+    e.preventDefault()
+    setSaving(true)
+    const { data: { user } } = await supabase.auth.getUser()
+    if (user) {
+      if (addresses.length > 0) {
+        await supabase.from('addresses').update({ ...addressForm }).eq('id', addresses[0].id)
+      } else {
+        await supabase.from('addresses').insert({ ...addressForm, parent_id: user.id })
+      }
+      await fetchAddresses()
+      setEditingAddress(false)
+    }
+    setSaving(false)
+  }
+
   const [isEditing, setIsEditing] = useState(false)
 
   async function handleAvatarUpload(file: File) {
@@ -146,11 +180,59 @@ export default function ProfileClient({ profile, email, createdAt }: ProfileClie
             </div>
           </div>
           <span className="text-[var(--color-fun-purple)] font-black text-xl bg-purple-50 px-4 py-2 btn-pill border border-purple-100">
-            Rs. {((profile as any)?.ai_credit_accounts?.balance ?? 0).toFixed(2)}
+            {((profile as any)?.ai_credit_accounts?.balance ?? 0)}
           </span>
         </div>
       </div>
 
+      
+      {/* Shipping Address */}
+      <div className="bg-white rounded-3xl p-6 shadow-sm border border-stone-100 mb-4">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="font-display font-bold text-stone-900 text-lg">Shipping Address</h2>
+          {!editingAddress && (
+            <button onClick={() => {
+              if (addresses[0]) {
+                setAddressForm(addresses[0])
+              }
+              setEditingAddress(true)
+            }} className="text-amber-600 text-sm font-semibold hover:underline">
+              {addresses.length > 0 ? 'Edit' : 'Add Address'}
+            </button>
+          )}
+        </div>
+        
+        {editingAddress ? (
+          <form onSubmit={saveAddress} className="space-y-3">
+            <input type="text" placeholder="Full Name" required value={addressForm.full_name} onChange={e => setAddressForm({...addressForm, full_name: e.target.value})} className="w-full px-3 py-2 border rounded-xl" />
+            <input type="text" placeholder="Phone" required value={addressForm.phone} onChange={e => setAddressForm({...addressForm, phone: e.target.value})} className="w-full px-3 py-2 border rounded-xl" />
+            <input type="text" placeholder="Street Address" required value={addressForm.line1} onChange={e => setAddressForm({...addressForm, line1: e.target.value})} className="w-full px-3 py-2 border rounded-xl" />
+            <div className="flex gap-2">
+              <input type="text" placeholder="City" required value={addressForm.city} onChange={e => setAddressForm({...addressForm, city: e.target.value})} className="w-1/2 px-3 py-2 border rounded-xl" />
+              <input type="text" placeholder="State" required value={addressForm.state} onChange={e => setAddressForm({...addressForm, state: e.target.value})} className="w-1/2 px-3 py-2 border rounded-xl" />
+            </div>
+            <input type="text" placeholder="Pincode" required value={addressForm.pincode} onChange={e => setAddressForm({...addressForm, pincode: e.target.value})} className="w-full px-3 py-2 border rounded-xl" />
+            <div className="flex gap-2 pt-2">
+              <button type="button" onClick={() => setEditingAddress(false)} className="flex-1 py-2 text-stone-500 font-semibold border rounded-xl">Cancel</button>
+              <button type="submit" disabled={saving} className="flex-1 py-2 bg-amber-500 text-white font-bold rounded-xl">{saving ? 'Saving...' : 'Save'}</button>
+            </div>
+          </form>
+        ) : (
+          <div className="text-stone-600 text-sm">
+            {addresses.length > 0 ? (
+              <>
+                <p className="font-semibold text-stone-800">{addresses[0].full_name}</p>
+                <p>{addresses[0].line1}</p>
+                <p>{addresses[0].city}, {addresses[0].state} {addresses[0].pincode}</p>
+                <p>?? {addresses[0].phone}</p>
+              </>
+            ) : (
+              <p className="text-stone-400 italic">No default address saved yet.</p>
+            )}
+          </div>
+        )}
+      </div>
+  
       {/* Sign Out */}
       <form action="/api/auth/signout" method="post">
         <button

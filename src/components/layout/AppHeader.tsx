@@ -103,11 +103,9 @@ export default function AppHeader({ user }: AppHeaderProps) {
                 className="flex items-center gap-2 bg-white px-3 py-2 rounded-full border border-stone-200 shadow-sm hover:shadow-md transition-all active:scale-95"
               >
                 <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center border-2 border-amber-300 overflow-hidden">
-                  <img
-                    src={`https://api.dicebear.com/7.x/notionists/svg?seed=${user.id}`}
-                    alt="avatar"
-                    className="w-full h-full object-cover"
-                  />
+                  <span className="text-amber-700 font-bold text-sm">
+                    {parentName.charAt(0).toUpperCase()}
+                  </span>
                 </div>
                 <span className="font-display font-bold text-stone-700 hidden sm:block">
                   {parentName}

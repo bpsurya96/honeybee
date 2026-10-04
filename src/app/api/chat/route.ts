@@ -134,6 +134,19 @@ The parent hasn't added any children yet.
 Encourage them to add their child's profile to get personalised learning recommendations.`
     }
 
+    // Fetch active products to allow the AI to make recommendations
+    const { data: allProducts } = await supabase
+      .from('products')
+      .select('name, age_min, age_max, description')
+      .eq('status', 'active');
+      
+    if (allProducts && allProducts.length > 0) {
+      systemPrompt += `\n\nHere is the current HoneyBee Learning product catalog. If appropriate, you may gently recommend a product that fits the child's age and developmental needs based on their questions:\n`;
+      allProducts.forEach(p => {
+        systemPrompt += `- ${p.name} (Ages ${p.age_min}-${p.age_max} months): ${p.description}\n`;
+      });
+    }
+
     // Optional: Log the conversation (Issue P2: Unused ai_conversations)
     if (lastMessage?.role === 'user') {
       try {

@@ -2,6 +2,7 @@ import type { Metadata } from 'next'
 import { createClient } from '@/lib/supabase/server'
 import Link from 'next/link'
 import { formatAge, calculateAgeMonths } from '@/lib/utils'
+import DeleteChildButton from './DeleteChildButton'
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -60,10 +61,10 @@ export default async function DashboardPage() {
               const ageMonths = calculateAgeMonths(child.date_of_birth)
               const ageDisplay = formatAge(ageMonths)
               return (
+                <div key={child.id} className="relative group bg-white rounded-3xl shadow-sm border border-stone-100 hover:shadow-md hover:-translate-y-0.5 transition-all">
                 <Link
-                  key={child.id}
                   href={`/children/${child.id}`}
-                  className="bg-white rounded-3xl p-6 shadow-sm border border-stone-100 hover:shadow-md hover:-translate-y-0.5 transition-all block"
+                  className="block p-6"
                 >
                   <div className="flex items-center gap-4">
                     <div className="w-14 h-14 bg-amber-100 rounded-2xl flex items-center justify-center text-2xl font-display font-black text-amber-600">
@@ -78,6 +79,8 @@ export default async function DashboardPage() {
                   </div>
                   <p className="text-stone-400 text-xs mt-4 font-medium">Tap to view learning dashboard →</p>
                 </Link>
+                <DeleteChildButton childId={child.id} childName={child.name} />
+              </div>
               )
             })}
           </div>

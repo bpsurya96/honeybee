@@ -4,6 +4,7 @@
 import { useState, useRef, useEffect } from 'react'
 import { useChat } from '@ai-sdk/react'
 import { Send, Bot, User, AlertCircle, Loader2, Zap } from 'lucide-react'
+import ReactMarkdown from 'react-markdown'
 
 interface CoachClientProps {
   childrenList: Array<{ id: string; name: string }>
@@ -148,8 +149,8 @@ export default function CoachClient({ childrenList, initialCredits }: CoachClien
                   ? 'bg-amber-500 text-white rounded-tr-sm' 
                   : 'bg-white border border-stone-200 text-stone-800 rounded-tl-sm'
               }`}>
-                <div className="prose prose-sm prose-stone max-w-none leading-relaxed whitespace-pre-wrap">
-                  {m.content}
+                <div className="prose prose-sm prose-stone max-w-none leading-relaxed">
+                  <ReactMarkdown>{m.content}</ReactMarkdown>
                 </div>
               </div>
 
