@@ -58,9 +58,23 @@ export default function CoachClient({ childrenList, initialCredits }: CoachClien
           </p>
         </div>
         
-        <div className="bg-amber-100 text-amber-800 font-bold px-4 py-2 rounded-2xl flex items-center gap-2 shadow-sm border border-amber-200 transition-all duration-300">
-          <Zap size={16} className="fill-amber-500 text-amber-600" />
-          <span>{credits} AI Credits</span>
+        <div className="bg-white p-3 rounded-2xl shadow-sm border border-stone-200 flex flex-col gap-2 min-w-[160px] transition-all duration-300 hover:shadow-md">
+          <div className="flex items-center justify-between text-stone-800 font-bold text-sm">
+            <span className="flex items-center gap-1.5">
+               <Zap size={16} className="fill-amber-500 text-amber-500 animate-pulse" /> 
+               Credits
+            </span>
+            <span className={credits < 5 ? "text-red-500" : "text-amber-600"}>{credits}</span>
+          </div>
+          <div className="w-full h-2 bg-stone-100 rounded-full overflow-hidden">
+             <div 
+               className={`h-full rounded-full transition-all duration-700 ease-out ${credits < 5 ? 'bg-red-500' : 'bg-amber-500'}`} 
+               style={{ width: `${Math.min(100, (credits / 50) * 100)}%` }} 
+             />
+          </div>
+          <span className="text-[10px] text-stone-400 font-medium tracking-wide uppercase text-right">
+            {credits < 5 ? 'Low Balance' : 'Available'}
+          </span>
         </div>
       </div>
 

@@ -71,8 +71,17 @@ export async function POST(req: Request) {
     // Fetch child context
     let childrenQuery = supabase
       .from('children')
-      .select('id, name, date_of_birth')
-      .eq('id', user.id)
+      .select(`
+        id, 
+        name, 
+        date_of_birth,
+        child_products (
+          order_items (
+            product_name
+          )
+        )
+      `)
+      .eq('parent_id', user.id)
 
     if (childId) {
       childrenQuery = childrenQuery.eq('id', childId)
@@ -106,6 +115,14 @@ You are supportive, encouraging, and provide evidence-based advice in a warm ton
             : `${months} months`
 
         systemPrompt += `- ${child.name}, age ${ageStr} (DOB: ${child.date_of_birth})\n`
+        
+        const products = (child.child_products || [])
+          .map((cp: any) => cp.order_items?.product_name)
+          .filter(Boolean);
+          
+        if (products.length > 0) {
+          systemPrompt += `  Active Books/Kits: ${products.join(', ')}\n`
+        }
       })
 
       systemPrompt += `
