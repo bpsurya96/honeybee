@@ -11,21 +11,31 @@ export default function DeleteChildButton({ childId, childName }: { childId: str
   const router = useRouter()
   const supabase = createClient()
 
+  const [errorMsg, setErrorMsg] = useState('')
+
   async function handleDelete(e: React.MouseEvent) {
     e.preventDefault()
     e.stopPropagation()
     
     setIsDeleting(true)
-    const { error } = await supabase.rpc('soft_delete_child', { p_child_id: childId })
+    setErrorMsg('')
+    
+    // Attempt hard delete first
+    const { error: hardError } = await supabase.from('children').delete().eq('id', childId)
+    
+    if (hardError) {
+      // If hard delete fails due to constraints, attempt soft delete
+      const { error: softError } = await supabase.from('children').update({ is_deleted: true }).eq('id', childId)
+      if (softError) {
+        setIsDeleting(false)
+        setErrorMsg(softError.message || 'Failed to delete. Please contact support.')
+        return
+      }
+    }
     
     setIsDeleting(false)
-    if (!error) {
-      setIsOpen(false)
-      router.refresh()
-    } else {
-      console.error(error)
-      alert('Failed to delete child profile.')
-    }
+    setIsOpen(false)
+    router.refresh()
   }
 
   return (
@@ -59,9 +69,14 @@ export default function DeleteChildButton({ childId, childName }: { childId: str
               Remove {childName}?
             </h3>
             
-            <p className="text-center text-stone-500 mb-8 leading-relaxed">
+                        <p className="text-center text-stone-500 mb-8 leading-relaxed">
               Are you sure you want to delete this profile? This action will completely remove <strong>{childName}'s</strong> learning progress and AI Coach history.
             </p>
+            {errorMsg && (
+              <div className="bg-red-50 text-red-600 p-3 rounded-xl text-sm mb-4 text-center font-medium">
+                {errorMsg}
+              </div>
+            )}
 
             <div className="flex gap-3">
               <button 
