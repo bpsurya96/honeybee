@@ -16,7 +16,7 @@ export default function CoachClient({ childrenList, initialCredits }: CoachClien
   const [credits, setCredits] = useState<number>(initialCredits)
   
   // We need a stable conversation ID for this session to group logs
-  const [conversationId] = useState<string>(`conv-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`)
+  const [conversationId] = useState<string>(() => crypto.randomUUID ? crypto.randomUUID() : '123e4567-e89b-12d3-a456-426614174000')
   
   const { messages, input, handleInputChange, handleSubmit, isLoading, error } = useChat({
     api: '/api/chat',

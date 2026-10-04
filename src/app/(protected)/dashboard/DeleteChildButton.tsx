@@ -20,17 +20,13 @@ export default function DeleteChildButton({ childId, childName }: { childId: str
     setIsDeleting(true)
     setErrorMsg('')
     
-    // Attempt hard delete first
-    const { error: hardError } = await supabase.from('children').delete().eq('id', childId)
+    // RLS blocks DELETE entirely, so we MUST use a soft delete update
+    const { error: updateError } = await supabase.from('children').update({ is_deleted: true }).eq('id', childId)
     
-    if (hardError) {
-      // If hard delete fails due to constraints, attempt soft delete
-      const { error: softError } = await supabase.from('children').update({ is_deleted: true }).eq('id', childId)
-      if (softError) {
-        setIsDeleting(false)
-        setErrorMsg(softError.message || 'Failed to delete. Please contact support.')
-        return
-      }
+    if (updateError) {
+      setIsDeleting(false)
+      setErrorMsg(updateError.message || 'Failed to delete. Please contact support.')
+      return
     }
     
     setIsDeleting(false)

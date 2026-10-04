@@ -147,40 +147,65 @@ Encourage them to add their child's profile to get personalised learning recomme
       });
     }
 
-    // Optional: Log the conversation (Issue P2: Unused ai_conversations)
-    if (lastMessage?.role === 'user') {
+    // Setup robust conversation & message logging
+    let activeConvId = conversationId;
+    
+    if (lastMessage?.role === 'user' && activeConvId) {
       try {
-        let activeConvId = conversationId;
-        if (!activeConvId) {
-          // Create new conversation
-          const { data: newConv } = await adminSupabase.from('ai_conversations').insert({
+        // Check if conversation exists, if not create it
+        const { data: existing } = await adminSupabase.from('ai_conversations').select('id').eq('id', activeConvId).single();
+        if (!existing) {
+          await adminSupabase.from('ai_conversations').insert({
+            id: activeConvId,
             parent_id: user.id,
             child_id: childId || null,
             title: lastMessage.content.substring(0, 50) + '...'
-          }).select('id').single();
-          if (newConv) activeConvId = newConv.id;
-        }
-
-        if (activeConvId) {
-          await adminSupabase.from('ai_messages').insert({
-            conversation_id: activeConvId,
-            role: 'user',
-            content: lastMessage.content
           });
-          // Note: Assistant message is streamed, so logging it perfectly requires tapping into onFinish callback.
         }
+        
+        // Log User message
+        await adminSupabase.from('ai_messages').insert({
+          conversation_id: activeConvId,
+          role: 'user',
+          content: lastMessage.content
+        });
       } catch (e) {
-        console.error('Failed to log conversation:', e);
+        console.error('Failed to log user message:', e);
       }
     }
 
+    const startTime = Date.now();
+
     // Call Gemini
     const result = await streamText({
-      model: google('gemini-3.1-flash-lite'), // Updated to 1.5 flash since 3.5 doesn't exist/is typo in old code
+      model: google('gemini-3.1-flash-lite'), // Note: the literal model string
       system: systemPrompt,
       messages,
       onFinish: async (completion) => {
-        // Log assistant response if we have the tools (omitting for brevity, requires passing conv ID)
+        if (!activeConvId) return;
+        try {
+          // 1. Log AI Message
+          await adminSupabase.from('ai_messages').insert({
+            conversation_id: activeConvId,
+            role: 'assistant',
+            content: completion.text,
+            tokens_used: completion.usage?.totalTokens || 0
+          });
+          
+          // 2. Log Usage 
+          await adminSupabase.from('ai_usage_log').insert({
+            parent_id: user.id,
+            conversation_id: activeConvId,
+            model: 'gemini-3.1-flash-lite',
+            input_tokens: (completion.usage as any)?.promptTokens || 0,
+            output_tokens: (completion.usage as any)?.completionTokens || 0,
+            latency_ms: Date.now() - startTime,
+            success: true,
+            credit_deducted: 1
+          });
+        } catch (e) {
+          console.error('Failed to log assistant message & usage:', e);
+        }
       }
     })
 
