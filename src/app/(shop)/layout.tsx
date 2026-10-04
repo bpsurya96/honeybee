@@ -1,21 +1,10 @@
-import { redirect } from 'next/navigation'
 import { createClient } from '@/lib/supabase/server'
 import AppHeader from '@/components/layout/AppHeader'
 import MobileNav from '@/components/layout/MobileNav'
 
-export default async function ProtectedLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default async function ShopLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser()
-
-  if (!user) {
-    redirect('/login')
-  }
+  const { data: { user } } = await supabase.auth.getUser()
 
   return (
     <div className="min-h-screen bg-amber-50">

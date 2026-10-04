@@ -12,7 +12,7 @@ const navItems = [
   { href: '/profile', label: 'Profile', icon: User },
 ]
 
-export default function MobileNav() {
+export default function MobileNav({ user }: { user?: any }) {
   const pathname = usePathname()
 
   return (

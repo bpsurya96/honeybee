@@ -1,12 +1,14 @@
 ﻿'use client'
 
 import { useState } from 'react'
-import { useRouter } from 'next/navigation'
+import { useRouter, useSearchParams } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
 import Link from 'next/link'
 
 export default function LoginForm() {
   const router = useRouter()
+  const searchParams = useSearchParams()
+  const nextUrl = searchParams.get('next') || '/dashboard'
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -29,7 +31,7 @@ export default function LoginForm() {
         return
       }
 
-      router.push('/dashboard')
+      router.push(nextUrl)
       router.refresh()
     } catch {
       setError('Something went wrong. Please try again.')
@@ -45,7 +47,7 @@ export default function LoginForm() {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=/dashboard`,
+          redirectTo: `${window.location.origin}/auth/callback?next=${nextUrl}`,
         }
       })
 

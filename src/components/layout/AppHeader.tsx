@@ -1,8 +1,7 @@
-﻿/* eslint-disable @next/next/no-img-element */
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useState, useEffect, useRef } from 'react'
 import { ChevronDown, ShoppingCart } from 'lucide-react'
 import { createClient } from '@/lib/supabase/client'
@@ -10,7 +9,7 @@ import type { User } from '@supabase/supabase-js'
 import { useCart } from '@/context/CartContext'
 
 interface AppHeaderProps {
-  user: User
+  user: User | null
 }
 
 const navLinks = [
@@ -23,6 +22,7 @@ const navLinks = [
 
 export default function AppHeader({ user }: AppHeaderProps) {
   const pathname = usePathname()
+  const router = useRouter()
   const [parentName, setParentName] = useState<string>('Parent')
   const [dropdownOpen, setDropdownOpen] = useState(false)
   const dropdownRef = useRef<HTMLDivElement>(null)
@@ -30,6 +30,7 @@ export default function AppHeader({ user }: AppHeaderProps) {
   const { totalItems } = useCart();
 
   useEffect(() => {
+    if (!user) return;
     const supabase = createClient()
     supabase
       .from('profiles')
@@ -41,9 +42,8 @@ export default function AppHeader({ user }: AppHeaderProps) {
           setParentName(data.full_name)
         }
       })
-  }, [user.id])
+  }, [user?.id])
 
-  // Close dropdown on outside click
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
@@ -54,28 +54,31 @@ export default function AppHeader({ user }: AppHeaderProps) {
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
 
+  async function handleSignOut() {
+    const supabase = createClient()
+    await supabase.auth.signOut()
+    router.push('/login')
+    router.refresh()
+  }
+
   return (
     <header className="fixed top-0 left-0 right-0 z-40 bg-white/90 backdrop-blur-md border-b border-stone-100 h-16">
       <div className="max-w-6xl mx-auto px-4 h-full flex items-center justify-between">
         {/* Logo */}
-        <Link href="/dashboard" className="flex items-center gap-2 shrink-0 group">
+        <Link href={user ? "/dashboard" : "/"} className="flex items-center gap-2 shrink-0 group">
           <span className="text-2xl group-hover:scale-110 transition-transform">🐝</span>
           <span className="font-display font-800 text-lg text-stone-900 hidden sm:block">
-            HoneyBee<span className="text-[var(--color-fun-red)]"> Learning</span>
+            HoneyBee<span className="text-amber-500"> Learning</span>
           </span>
         </Link>
 
         {/* Desktop Navigation */}
-        <nav className="hidden md:flex items-center gap-1">
-          {navLinks.map((link) => (
+        <nav className="hidden md:flex items-center gap-6">
+          {navLinks.filter(l => user || l.href === "/products" || l.href === "/cart").map((link) => (
             <Link
               key={link.href}
               href={link.href}
-              className={`px-3 py-2 btn-pill text-sm font-medium transition-colors ${
-                pathname.startsWith(link.href)
-                  ? 'bg-[var(--color-fun-yellow)] text-stone-900 shadow-sm'
-                  : 'text-stone-600 hover:bg-stone-100 hover:text-stone-900'
-              }`}
+              className={`text-sm font-bold transition-colors hover:text-amber-600 ${pathname === link.href ? "text-amber-600 border-b-2 border-amber-600 pb-1" : "text-stone-600"}`}
             >
               {link.label}
             </Link>
@@ -84,76 +87,64 @@ export default function AppHeader({ user }: AppHeaderProps) {
 
         {/* Right Actions */}
         <div className="flex items-center gap-4">
-          <Link href="/cart" className="relative p-2 text-stone-600 hover:text-[var(--color-fun-red)] transition-colors hover:scale-110 duration-200">
+          <Link href="/cart" className="relative p-2 text-stone-600 hover:text-amber-600 transition-colors hover:scale-110 duration-200">
             <ShoppingCart size={24} />
             {totalItems > 0 && (
-              <span className="absolute top-0 right-0 w-5 h-5 bg-[var(--color-fun-red)] text-white rounded-full flex items-center justify-center text-[10px] font-bold">
+              <span className="absolute top-0 right-0 w-5 h-5 bg-amber-500 text-white rounded-full flex items-center justify-center text-[10px] font-bold">
                 {totalItems}
               </span>
             )}
           </Link>
 
-          {/* Parent Profile */}
-          <div className="relative" ref={dropdownRef}>
-            <button
-              onClick={() => setDropdownOpen(!dropdownOpen)}
-              className="flex items-center gap-2 bg-[var(--color-fun-purple)] hover:bg-[#3b085e] border border-transparent btn-pill px-3 py-1.5 transition-colors text-sm"
-            >
-              <div className="w-6 h-6 bg-white rounded-full flex items-center justify-center text-xs font-bold text-[var(--color-fun-purple)] overflow-hidden">
-                {parentName[0].toUpperCase()}
-              </div>
-              <div className="flex flex-col text-left hidden sm:block text-white">
-                <span className="font-semibold max-w-28 truncate leading-tight">
+          {user ? (
+            <div className="relative" ref={dropdownRef}>
+              <button
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+                className="flex items-center gap-2 bg-white px-3 py-2 rounded-full border border-stone-200 shadow-sm hover:shadow-md transition-all active:scale-95"
+              >
+                <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center border-2 border-amber-300 overflow-hidden">
+                  <img
+                    src={`https://api.dicebear.com/7.x/notionists/svg?seed=${user.id}`}
+                    alt="avatar"
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+                <span className="font-display font-bold text-stone-700 hidden sm:block">
                   {parentName}
                 </span>
-              </div>
-              <ChevronDown size={14} className={`text-white transition-transform ${dropdownOpen ? 'rotate-180' : ''}`} />
-            </button>
+                <ChevronDown className={`w-4 h-4 text-stone-400 transition-transform duration-200 ${dropdownOpen ? 'rotate-180' : ''}`} />
+              </button>
 
-            {dropdownOpen && (
-              <div className="absolute right-0 top-full mt-2 bg-white rounded-2xl shadow-xl border border-stone-100 p-2 min-w-48 z-50">
-                <div className="px-3 py-2 border-b border-stone-100 mb-2">
-                  <p className="font-semibold text-stone-900 text-sm truncate">{parentName}</p>
-                  <p className="text-stone-400 text-xs">Parent Account</p>
-                </div>
-
-                {/* Mobile-only Navigation Links */}
-                <div className="md:hidden border-b border-stone-100 pb-2 mb-2">
-                  {navLinks.map((link) => (
+              {dropdownOpen && (
+                <div className="absolute right-0 mt-2 w-48 bg-white rounded-2xl shadow-xl border border-stone-100 overflow-hidden z-50">
+                  <div className="p-3 border-b border-stone-50 bg-stone-50/50">
+                    <p className="text-xs text-stone-500 font-medium uppercase tracking-wider">Signed in as</p>
+                    <p className="text-sm font-bold text-stone-800 truncate">{user.email}</p>
+                  </div>
+                  <div className="p-1">
                     <Link
-                      key={link.href}
-                      href={link.href}
+                      href="/profile"
+                      className="block px-4 py-2.5 text-sm text-stone-700 font-medium hover:bg-amber-50 hover:text-amber-700 rounded-xl transition-colors"
                       onClick={() => setDropdownOpen(false)}
-                      className={`flex items-center gap-3 px-3 py-2 btn-pill transition-colors w-full text-left ${
-                        pathname.startsWith(link.href) ? 'bg-[var(--color-fun-yellow)] text-stone-900 font-bold' : 'hover:bg-stone-50 text-stone-700 font-medium'
-                      }`}
                     >
-                      <span className="text-sm">{link.label}</span>
+                      Settings
                     </Link>
-                  ))}
-                </div>
-
-                <Link
-                  href="/profile"
-                  onClick={() => setDropdownOpen(false)}
-                  className="flex items-center gap-3 px-3 py-2 btn-pill hover:bg-[var(--color-fun-yellow)] transition-colors w-full text-left hidden md:flex"
-                >
-                  <span className="text-sm font-medium text-stone-700">My Profile</span>
-                </Link>
-
-                <div className="border-t border-stone-100 mt-2 pt-2">
-                  <form action="/api/auth/signout" method="POST">
                     <button
-                      type="submit"
-                      className="flex w-full items-center gap-2 px-3 py-2 btn-pill hover:bg-red-50 transition-colors text-sm text-red-500 font-medium"
+                      onClick={handleSignOut}
+                      className="w-full text-left px-4 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-xl transition-colors mt-1"
                     >
                       Sign Out
                     </button>
-                  </form>
+                  </div>
                 </div>
-              </div>
-            )}
-          </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <Link href="/login" className="text-sm font-bold text-stone-700 hover:text-amber-600 transition-colors hidden sm:block">Log In</Link>
+              <Link href="/signup" className="text-sm font-bold bg-amber-500 text-white px-4 py-2 rounded-full hover:bg-amber-600 shadow-md transition-all active:scale-95">Sign Up</Link>
+            </div>
+          )}
         </div>
       </div>
     </header>
