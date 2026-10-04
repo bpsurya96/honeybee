@@ -36,7 +36,7 @@ export async function POST(req: Request) {
         .select('balance')
         .eq('id', user.id)
         .single();
-        
+
       if (!creditAccount || creditAccount.balance < 1) {
         return new Response('Insufficient AI Credits', { status: 402 });
       }
@@ -146,7 +146,7 @@ Encourage them to add their child's profile to get personalised learning recomme
 
     // Call Gemini
     const result = await streamText({
-      model: google('gemini-1.5-flash'), // Updated to 1.5 flash since 3.5 doesn't exist/is typo in old code
+      model: google('gemini-3.1-flash-lite'), // Updated to 1.5 flash since 3.5 doesn't exist/is typo in old code
       system: systemPrompt,
       messages,
       onFinish: async (completion) => {

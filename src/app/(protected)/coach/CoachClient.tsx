@@ -1,17 +1,18 @@
-﻿/* eslint-disable @typescript-eslint/no-explicit-any */
-
+/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
 import { useChat } from '@ai-sdk/react'
-import { Send, Bot, User, AlertCircle, Loader2 } from 'lucide-react'
+import { Send, Bot, User, AlertCircle, Loader2, Zap } from 'lucide-react'
 
 interface CoachClientProps {
   childrenList: Array<{ id: string; name: string }>
+  initialCredits: number
 }
 
-export default function CoachClient({ childrenList }: CoachClientProps) {
+export default function CoachClient({ childrenList, initialCredits }: CoachClientProps) {
   const [selectedChildId, setSelectedChildId] = useState<string>('')
+  const [credits, setCredits] = useState<number>(initialCredits)
   
   // We need a stable conversation ID for this session to group logs
   const [conversationId] = useState<string>(`conv-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`)
@@ -22,6 +23,12 @@ export default function CoachClient({ childrenList }: CoachClientProps) {
     body: {
       childId: selectedChildId || undefined,
       conversationId: conversationId
+    },
+    onResponse: (response) => {
+      // If we got a successful response stream started, a credit was used.
+      if (response.ok) {
+        setCredits(c => Math.max(0, c - 1))
+      }
     },
     onError: (e) => {
       console.error(e)
@@ -39,9 +46,27 @@ export default function CoachClient({ childrenList }: CoachClientProps) {
 
   return (
     <div className="flex flex-col h-full relative bg-stone-50/30">
+      
+      {/* Header with dynamic credits */}
+      <div className="mb-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 px-4 pt-4 pb-2">
+        <div>
+          <h1 className="text-3xl font-display font-black text-stone-900 mb-2">
+            Your AI Coach
+          </h1>
+          <p className="text-stone-500 text-sm sm:text-base">
+            Ask questions about your child&apos;s development, get activity ideas, or seek parenting advice.
+          </p>
+        </div>
+        
+        <div className="bg-amber-100 text-amber-800 font-bold px-4 py-2 rounded-2xl flex items-center gap-2 shadow-sm border border-amber-200 transition-all duration-300">
+          <Zap size={16} className="fill-amber-500 text-amber-600" />
+          <span>{credits} AI Credits</span>
+        </div>
+      </div>
+
       {/* Header Context Selector */}
       {childrenList.length > 0 && (
-        <div className="p-4 border-b border-stone-100 bg-white flex items-center justify-between z-10">
+        <div className="p-4 border-b border-t border-stone-100 bg-white flex items-center justify-between z-10">
           <span className="text-sm font-semibold text-stone-500 uppercase tracking-wider">
             Focus Context:
           </span>
@@ -79,8 +104,8 @@ export default function CoachClient({ childrenList }: CoachClientProps) {
             <p className="text-stone-500 text-lg leading-relaxed mb-8">
               I can help you interpret your child's learning progress, suggest offline activities, or answer any parenting questions.
               <br/><br/>
-              <span className="text-sm font-medium text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
-                ⚡ Costs 1 AI Credit per message
+              <span className="text-sm font-medium text-amber-600 bg-amber-50 px-3 py-1 rounded-full border border-amber-200 flex items-center gap-1 w-fit mx-auto">
+                <Zap size={14} className="fill-amber-500" /> Costs 1 AI Credit per message
               </span>
             </p>
             <div className="flex flex-wrap gap-2 justify-center">
@@ -144,11 +169,11 @@ export default function CoachClient({ childrenList }: CoachClientProps) {
             onChange={handleInputChange}
             placeholder="Ask your AI Coach anything... (Costs 1 credit)"
             className="flex-1 bg-stone-50 border border-stone-200 text-stone-900 rounded-full px-6 py-4 focus:ring-2 focus:ring-amber-400 focus:border-amber-400 outline-none font-medium shadow-inner"
-            disabled={isLoading || isInsufficientCredits}
+            disabled={isLoading || isInsufficientCredits || credits === 0}
           />
           <button
             type="submit"
-            disabled={isLoading || !input.trim() || isInsufficientCredits}
+            disabled={isLoading || !input.trim() || isInsufficientCredits || credits === 0}
             className="bg-amber-500 hover:bg-amber-600 disabled:bg-stone-200 disabled:text-stone-400 text-white rounded-full w-14 h-14 flex items-center justify-center transition-all shadow-md shrink-0"
           >
             <Send size={20} className={input.trim() ? "translate-x-0.5" : ""} />
