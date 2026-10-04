@@ -128,11 +128,11 @@ export default function ProductHeroClient({ product, ageDisplay, activityCount }
         <button
           onClick={handleAddToCart}
           disabled={adding}
-          aria-label={adding ? 'Added to cart' : `Add ${product.name} to cart`}
+          aria-label={adding ? 'Added!' : `Add ${product.name} to cart`}
           className="flex-1 flex items-center justify-center gap-2.5 bg-amber-500 hover:bg-amber-600 disabled:bg-amber-400 text-white font-display font-black text-lg py-3.5 px-6 rounded-2xl transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5 active:scale-95 focus-visible:ring-2 focus-visible:ring-amber-400 focus-visible:ring-offset-2"
         >
           <ShoppingCart size={20} aria-hidden="true" />
-          {adding ? 'Added! ✓' : 'Add to Cart'}
+          {adding ? 'Added!' : 'Add to Cart'}
         </button>
       </div>
 
@@ -182,7 +182,7 @@ export default function ProductHeroClient({ product, ageDisplay, activityCount }
           className="flex items-center gap-2 bg-amber-500 hover:bg-amber-600 disabled:bg-amber-400 text-white font-bold py-3 px-5 rounded-2xl transition-all shadow-md active:scale-95 whitespace-nowrap text-sm"
         >
           <ShoppingCart size={16} aria-hidden="true" />
-          {adding ? 'Added ✓' : 'Add to Cart'}
+          {adding ? 'Added!' : 'Add to Cart'}
         </button>
       </div>
 

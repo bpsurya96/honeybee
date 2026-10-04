@@ -5,7 +5,7 @@ import Link from 'next/link'
 import { useState } from 'react'
 import type { Product, Skill } from '@/types'
 import { useCart } from '@/context/CartContext'
-import { ShoppingCart } from 'lucide-react'
+import { ShoppingCart, Check } from 'lucide-react'
 
 interface ProductCardProps {
   product: Product & {
@@ -89,7 +89,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         >
           {adding ? (
             <>
-              <span className="animate-in zoom-in duration-300">?</span> Added!
+              <Check className="animate-in zoom-in duration-300 w-4 h-4" /> Added!
             </>
           ) : (
             <>
