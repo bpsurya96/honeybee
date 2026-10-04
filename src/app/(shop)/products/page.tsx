@@ -118,8 +118,8 @@ export default async function ProductsPage(props: { searchParams: Promise<{ [key
             </Suspense>
           </>
         ) : (
-          <div className="text-center py-24 bg-stone-50 rounded-3xl border border-stone-100 border-dashed">
-            <div className="text-6xl mb-4 opacity-50">??</div>
+          <div className="text-center py-24 bg-stone-50 rounded-3xl border border-stone-100 border-dashed flex flex-col items-center">
+            <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-stone-300 mb-4"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             <h2 className="text-2xl font-display font-bold text-stone-700 mb-2">No products found</h2>
             <p className="text-stone-500 mb-6 max-w-md mx-auto">
               We couldn't find any learning kits matching your exact filters. Try clearing some filters or searching for something else.
