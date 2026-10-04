@@ -198,7 +198,7 @@ export default async function HomePage() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-8">
             {featuredProducts?.map((product) => (
               <div key={product.id} className="bg-stone-50 rounded-3xl overflow-hidden border border-stone-100 flex flex-col group hover:shadow-lg transition-all">
                 <div className="h-48 bg-stone-200 relative overflow-hidden">

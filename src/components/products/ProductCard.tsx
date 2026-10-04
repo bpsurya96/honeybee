@@ -1,9 +1,7 @@
-﻿/* eslint-disable @next/next/no-img-element */
+
 'use client';
 
 import Link from 'next/link'
-import AgeRangeBadge from './AgeRangeBadge'
-import SkillBadge from './SkillBadge'
 import type { Product, Skill } from '@/types'
 import { useCart } from '@/context/CartContext'
 
@@ -14,60 +12,69 @@ interface ProductCardProps {
 }
 
 export default function ProductCard({ product }: ProductCardProps) {
-    const fallback = 'https://placehold.co/400x400/f8fafc/94a3b8?text=Product';
-  // If thumbnail_url exists, use it. Otherwise, if image_url exists, split by comma and take the first one.
+  const fallback = 'https://placehold.co/400x400/ffffff/94a3b8?text=Image';
   const imageUrl = (product as any).thumbnail_url || (product.image_url ? product.image_url.split(',')[0] : fallback);
   const { addToCart } = useCart();
   
+  const minYears = Math.floor(product.age_min_months / 12);
+  const maxYears = Math.floor(product.age_max_months / 12);
+  const ageLabel = maxYears > minYears ? `${minYears}-${maxYears} Yrs` : `${minYears}+ Yrs`;
+
   return (
-    <div className="bg-white rounded-3xl p-5 shadow-sm border border-stone-100 card-bouncy flex flex-col h-full">
-      <Link href={`/products/${product.id}`} className="block flex-1 flex flex-col">
-        <div className="aspect-square bg-stone-50 rounded-2xl mb-4 overflow-hidden relative group">
+    <div className="group bg-white rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 border border-stone-200 overflow-hidden flex flex-col h-full">
+      <Link href={`/products/${product.id}`} className="block flex-1 flex flex-col relative">
+        {/* Image Container */}
+        <div className="w-full aspect-square bg-white border-b border-stone-100 overflow-hidden relative flex items-center justify-center p-4">
           <img 
             src={imageUrl} 
             alt={product.name} 
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            className="w-full h-full object-contain group-hover:scale-105 transition-transform duration-500 mix-blend-multiply"
           />
-          <div className="absolute top-3 right-3">
-            <AgeRangeBadge minMonths={product.age_min_months} maxMonths={product.age_max_months} />
+          {/* Age Badge Floating */}
+          <div className="absolute top-2 left-2 z-10 bg-white/90 backdrop-blur-sm border border-stone-200 text-stone-700 text-[10px] sm:text-xs font-bold px-2 py-1 rounded-md shadow-sm">
+            {ageLabel}
           </div>
         </div>
         
-        <div className="flex-1 flex flex-col">
-          <div className="flex justify-between items-start gap-2 mb-1">
-            <h3 className="font-display font-bold text-lg text-stone-900 leading-tight">
-              {product.name}
-            </h3>
-            <span className="font-bold text-[var(--color-fun-red)]">Rs. {product.price.toFixed(2)}</span>
-          </div>
+        {/* Content Container */}
+        <div className="p-3 sm:p-4 flex-1 flex flex-col">
+          {/* Title */}
+          <h3 className="font-medium text-stone-800 text-xs sm:text-sm line-clamp-2 leading-snug mb-1 group-hover:text-amber-600 transition-colors">
+            {product.name}
+          </h3>
           
-          <p className="text-stone-500 text-sm line-clamp-2 mb-4 flex-1">
-            {product.description}
-          </p>
+          {/* Price */}
+          <div className="mt-1 mb-2 sm:mb-3 flex items-baseline gap-2">
+            <span className="text-base sm:text-lg font-bold text-stone-900">
+              ?{product.price.toLocaleString('en-IN')}
+            </span>
+          </div>
 
+          {/* Skills tags */}
           {product.skills && product.skills.length > 0 && (
-            <div className="flex flex-wrap gap-2 mt-auto mb-4">
+            <div className="flex flex-wrap gap-1 mt-auto mb-2">
               {product.skills.slice(0, 2).map((skill: Skill) => (
-                <SkillBadge key={skill.id} name={skill.name} />
+                <span key={skill.id} className="text-[9px] sm:text-[10px] font-medium px-1.5 py-0.5 bg-stone-100 text-stone-600 rounded">
+                  {skill.name}
+                </span>
               ))}
-              {product.skills.length > 2 && (
-                <div className="inline-flex items-center justify-center bg-stone-50 text-stone-500 px-2 py-1 rounded-full text-xs font-bold border border-stone-100">
-                  +{product.skills.length - 2}
-                </div>
-              )}
             </div>
           )}
         </div>
       </Link>
-      <button
-        onClick={(e) => {
-          e.preventDefault();
-          addToCart(product);
-        }}
-        className="mt-auto w-full py-2.5 bg-[#FFC837] text-stone-900 font-bold btn-pill"
-      >
-        Add to Cart ðŸ›’
-      </button>
+      
+      {/* Add to Cart Footer */}
+      <div className="px-3 pb-3 sm:px-4 sm:pb-4 mt-auto">
+        <button
+          onClick={(e) => {
+            e.preventDefault();
+            addToCart(product);
+          }}
+          className="w-full py-2 bg-[#FFD814] hover:bg-[#F7CA00] active:bg-[#F2C200] border border-[#FCD200] text-stone-900 font-bold text-xs sm:text-sm rounded-full transition-colors shadow-sm flex items-center justify-center"
+        >
+          Add to Cart
+        </button>
+      </div>
     </div>
   )
 }
