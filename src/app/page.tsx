@@ -14,7 +14,7 @@ export default async function HomePage() {
   const { data: featuredProducts } = await supabase
     .from('products')
     .select('*')
-    .limit(3)
+    .order('age_min_months', { ascending: true })
 
   return (
     <div className="bg-stone-50 min-h-screen">
@@ -52,7 +52,7 @@ export default async function HomePage() {
             </div>
             
             {/* The Parent Journey Mini-Nav */}
-            <div className="pt-16 hidden md:flex items-center justify-center gap-4 text-sm font-bold text-stone-500">
+            <div className="pt-16 flex flex-wrap items-center justify-center gap-2 md:gap-4 text-xs md:text-sm font-bold text-stone-500">
               <span className="text-amber-600">Understand</span>
               <ArrowRight className="w-4 h-4 opacity-50" />
               <span>Support</span>
@@ -81,7 +81,7 @@ export default async function HomePage() {
           
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-8 relative">
             {/* Connector line (desktop) */}
-            <div className="hidden lg:block absolute top-12 left-[10%] right-[10%] h-0.5 bg-stone-100 z-0" />
+            <div className="hidden md:block absolute top-12 left-[10%] right-[10%] h-0.5 bg-stone-100 z-0" />
             
             {[
               { title: 'Create Profile', desc: 'Tell us about your child\'s age and interests.', icon: UserPlus },
